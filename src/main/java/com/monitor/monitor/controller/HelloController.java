@@ -25,6 +25,10 @@ public class HelloController {
 		model.addAttribute("name", name);
 		return "cpu";
 	}
+	@RequestMapping("/memory")
+	public String memory(Model mode) {
+		return "memory";
+	}
 
 
 }

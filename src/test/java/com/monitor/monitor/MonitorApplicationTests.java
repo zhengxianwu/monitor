@@ -44,7 +44,7 @@ public class MonitorApplicationTests {
 		Date date = new Date();
 		String indexName = String.format("metricbeat-6.5.0-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.cpu);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.filesystem);
 		for(String s : metricNewData) {
 			System.out.println(s);
 		}

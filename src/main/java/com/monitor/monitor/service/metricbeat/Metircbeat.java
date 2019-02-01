@@ -15,6 +15,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.monitor.monitor.service.util.TimeUtil;
@@ -23,8 +24,45 @@ import net.sf.json.JSONObject;
 
 
 @Service
+@Scope("singleton")
 public class Metircbeat {
+	
+	private String ip = "127.0.0.1";
+	private String cluster_name = "elasticsearch";
+	private int port = 9300;
+	private String index = "metricbeat-6.5.0";
+	private TransportClient client = null;
+	
+	
+	
+	public Metircbeat() throws UnknownHostException {
+		super();
+		Settings settings = Settings.builder().put("cluster.name", this.cluster_name).build();
+		this.client = new PreBuiltTransportClient(settings)
+				.addTransportAddress(new TransportAddress(InetAddress.getByName(this.ip), this.port));// 这里端口不能与http的端口一样
+	}
+	
+	public TransportClient getClient() {
+		return this.client;
+	}
+	
+	
 
+	/**
+//	 * 获取客户端
+//	 * 
+//	 * @param ip   "127.0.0.1"
+//	 * @param port 9300
+//	 * @return
+//	 * @throws UnknownHostException
+//	 */
+//	public TransportClient getClient() throws UnknownHostException {
+//		Settings settings = Settings.builder().put("cluster.name", this.cluster_name).build();
+//		TransportClient client = new PreBuiltTransportClient(settings)
+//				.addTransportAddress(new TransportAddress(InetAddress.getByName(this.ip), this.port));// 这里端口不能与http的端口一样
+//		return client;
+//	}
+	
 	/**
 	 * 获取客户端
 	 * 

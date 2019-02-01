@@ -4,7 +4,7 @@
 <html style="height: 100%">
 <head>
 <meta charset="UTF-8">
-<title>Cpu</title>
+<title>memory</title>
 <!-- 默认静态文件路劲static -->
 <script type="text/javascript" src="./js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="./echarts/echarts.min.js"></script>
@@ -18,7 +18,7 @@
 <script type="text/javascript" src="./echarts/simplex.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-		alert(123);
+
 	});
 </script>
 </head>
@@ -29,6 +29,21 @@
 
 
 	<script type="text/javascript">
+		function getInfo() {
+			var k;
+			$.ajax({
+				type : "GET",
+				url : "/getMemory",
+				async : false,
+				data : "",
+				success : function(data) {
+					k = data;
+					console.log(k);
+				}
+			});
+			return k;
+		}
+
 		var dom = document.getElementById("container");
 		var myChart = echarts.init(dom);
 		var app = {};
@@ -47,7 +62,7 @@
 				startAngle : 180, //开始角度 左侧角度
 				endAngle : 0, //结束角度 右侧
 
-				name : '业务指标',
+				name : 'memory指标',
 				type : 'gauge',
 				detail : {
 					formatter : '{value}'
@@ -59,18 +74,16 @@
 					}
 				},
 				data : [ {
-					value : 100,
-					name : 'CPU使用率'
+					value : 0, //默认值
+					name : 'memory使用率'
 				} ]
 			} ]
 		};
 
-		setInterval(
-				function() {
-					option.series[0].data[0].value = (Math.random() * 100)
-							.toFixed(2) - 0;
-					myChart.setOption(option, true);
-				}, 2000);
+		setInterval(function() {
+			option.series[0].data[0].value = getInfo();
+			myChart.setOption(option, true);
+		}, 2000);
 		;
 		if (option && typeof option === "object") {
 			myChart.setOption(option, true);

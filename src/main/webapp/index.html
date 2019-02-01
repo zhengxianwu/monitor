@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Spring Boot Hello World Example with JSP</title>
+<meta charset="UTF-8">
+<title>Spring Boot Hello World Example with JSP</title>
+<link rel="stylesheet"
+	href="./jquery-ui-1.12.1.custom/jquery-ui.custom.css" />
+<script type="text/javascript" src="./js/jquery-3.3.1.js"></script>
+<script src="./jquery-ui-1.12.1.custom/jquery-ui.custom.min.js"></script>
 </head>
 <body>
-    <h2>Spring Boot Hello World Example with JSP</h2>
+	<h2>Spring Boot Hello World Example with JSP</h2>
+	<input type="text" name="date" id="date" />
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("#date").datepicker();
+		});
+	</script>
 </body>
 </html>
