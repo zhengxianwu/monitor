@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class TimeUtil {
+public class MyTimeUtil {
 
 	/**
 	 * 获取当前时间
@@ -116,4 +116,49 @@ public class TimeUtil {
 		arr[1] = start;
 		return arr;
 	}
+
+
+
+	/**
+	 * 获取UTC时间，比本地时间差8小时，迎合ES得时间,数组0是开始时间，数组1是结束时间(减去15分钟）
+	 * 
+	 * @param localTime
+	 * @return o是startTime,1是endTime
+	 */
+	public static String[] getLocalToUTCSub15() {
+		String[] arr = new String[2];
+		Date localDate = new Date();
+		long localTimeInMillis = localDate.getTime();
+		/** long时间转换成Calendar */
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(localTimeInMillis);
+		/** 取得时间偏移量 */
+		int zoneOffset = calendar.get(java.util.Calendar.ZONE_OFFSET);
+		/** 取得夏令时差 */
+		int dstOffset = calendar.get(java.util.Calendar.DST_OFFSET);
+		/** 从本地时间里扣除这些差量，即可以取得UTC时间 */
+		calendar.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
+		/** 取得的时间就是UTC标准时间 */
+		Date utcDate = new Date(calendar.getTimeInMillis());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		String end = dateFormat.format(utcDate);// 将本地日期格式化为UTC格式的 日期字符串
+		arr[1] = end;
+
+		// 当前时间减一分钟处理
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(utcDate);
+		calendar2.add(Calendar.MINUTE, -15);// 当前时间前去一个月，即一个月前的时间
+		String start = dateFormat.format(calendar2.getTime());
+		arr[0] = start;
+		return arr;
+	}
+
+
+
+
+
+
+
+
+
 }

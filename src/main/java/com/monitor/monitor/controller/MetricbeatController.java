@@ -35,7 +35,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @RestController
-public class indexController {
+public class MetricbeatController {
 
 //	private String index = "metricbeat-6.5.0";
 	private String index_home = "metricbeat-6.4.3";
@@ -45,7 +45,7 @@ public class indexController {
 	//@RestController返回是数据，不是页面
 	//@Controller 才是返回页面
 	
-	@RequestMapping("/getMemory")
+	@RequestMapping("/metricbeat/getMemory")
 	public String getMemory() throws UnknownHostException{
 //		system.memory.actual.used.pct
 //		类型：scaled_float
@@ -68,7 +68,7 @@ public class indexController {
 		
 	}
 	
-	@RequestMapping("/getFilesystem")
+	@RequestMapping("/metricbeat/getFilesystem")
 	public String getFilesystem() throws UnknownHostException{
 //		system.filesystem.used.pct
 //		类型：scaled_float
@@ -82,6 +82,26 @@ public class indexController {
 		JSONArray fromObject = JSONArray.fromObject(filesystemNewData);
 		System.out.println(fromObject.toString());
 		return fromObject.toString();
+	}
+	
+	@RequestMapping("/metricbeat/getCPU")
+	public String getCPU() throws UnknownHostException{
+//		system.cpu.total.pct
+//		类型：scaled_float
+//		格式：百分比
+//		在Idle和IOWait以外的状态下花费的CPU时间百分比。
+		TransportClient client = metricbeat.getClient();
+		Date date = new Date();
+		String indexName = String.format(index_home+"-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
+		date = null;
+		List<String> NewData = metricbeat.getMetricNewData(client, indexName, ESType.cpu);
+		JSONObject json = JSONObject.fromObject(NewData.get(0));
+		JSONObject system = json.getJSONObject("system");
+		JSONObject cpu = system.getJSONObject("cpu");
+		JSONObject total = cpu.getJSONObject("total");
+		String string = total.getString("pct");
+//		return total.getString("pct");
+		return json.toString();
 		
 	}
 	

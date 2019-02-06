@@ -18,7 +18,7 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.monitor.monitor.service.util.TimeUtil;
+import com.monitor.monitor.service.util.MyTimeUtil;
 
 import net.sf.json.JSONObject;
 
@@ -31,6 +31,7 @@ public class Metircbeat {
 	private String cluster_name = "elasticsearch";
 	private int port = 9300;
 	private String index = "metricbeat-6.5.0";
+	private String index_home = "metricbeat-6.4.3";
 	private TransportClient client = null;
 	
 	
@@ -119,7 +120,7 @@ public class Metircbeat {
 	 */
 	public List<String> getMetricNewData(TransportClient client, String indexName, ESType e) {
 		// 1、获取最新一条数据
-		String[] localToUTC = TimeUtil.getLocalToUTC();
+		String[] localToUTC = MyTimeUtil.getLocalToUTC();
 		List<String> rangeSearch = RangeSearch(client, indexName, localToUTC[0], localToUTC[1], e.toString(), 0, 1);
 
 		// 2、根据最新数据的timestamp获取批量数据

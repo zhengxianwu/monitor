@@ -14,9 +14,9 @@ public class TimeUtilTest {
 //		for(String s : localToUTC) {
 //			System.out.println(s);
 //		}
-		String nowTime = TimeUtil.getNowTime();
+		String nowTime = MyTimeUtil.getNowTime();
 		System.out.println(nowTime);
-		String[] minuteRange = TimeUtil.getMinuteRange(nowTime);
+		String[] minuteRange = MyTimeUtil.getMinuteRange(nowTime);
 		for (String s : minuteRange) {
 			System.out.println(s);
 		}
