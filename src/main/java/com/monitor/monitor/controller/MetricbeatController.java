@@ -98,10 +98,14 @@ public class MetricbeatController {
 		JSONObject json = JSONObject.fromObject(NewData.get(0));
 		JSONObject system = json.getJSONObject("system");
 		JSONObject cpu = system.getJSONObject("cpu");
-		JSONObject total = cpu.getJSONObject("total");
-		String string = total.getString("pct");
-//		return total.getString("pct");
-		return json.toString();
+		JSONObject system_cpu = cpu.getJSONObject("system");
+		JSONObject system_user = cpu.getJSONObject("user");
+		double cores = Double.valueOf(cpu.getString("cores"));
+		double system_cpu_value =  Double.valueOf(system_cpu.getString("pct"));
+		double system_user_value = Double.valueOf(system_user.getString("pct"));
+		double cpu_usage =  (system_cpu_value+system_user_value)/cores;
+		String value = MyDataUtil.formatDouble(cpu_usage*100);
+		return value;
 		
 	}
 	
