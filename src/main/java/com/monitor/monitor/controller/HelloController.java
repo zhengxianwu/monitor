@@ -14,11 +14,11 @@ public class HelloController {
 		return "hello";
 	}
 	
-	@RequestMapping("/index")
-	public String index(Model model,@RequestParam(value="name",required=false,defaultValue="zhansang") String name) {
-		model.addAttribute("name", name);
+	@RequestMapping("/")
+	public String index(Model model) {
 		return "index";
 	}
+	
 	
 	@RequestMapping("/cpu")
 	public String cpu(Model model,@RequestParam(value="name",required=false,defaultValue="zhansang") String name) {
