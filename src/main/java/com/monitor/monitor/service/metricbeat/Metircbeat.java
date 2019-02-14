@@ -124,6 +124,7 @@ public class Metircbeat {
 		List<String> rangeSearch = RangeSearch(client, indexName, localToUTC[0], localToUTC[1], e.toString(), 0, 1);
 
 		// 2、根据最新数据的timestamp获取批量数据
+		
 		String data = rangeSearch.get(0).toString();
 		JSONObject json = JSONObject.fromObject(data);
 		List<String> sameTimeData = getSameTimeData(client, indexName, json.getString("@timestamp"), e);

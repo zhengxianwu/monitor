@@ -33,7 +33,7 @@
 			var k;
 			$.ajax({
 				type : "GET",
-				url : "/getMemory",
+				url : "/metricbeat/getMemory",
 				async : false,
 				data : "",
 				success : function(data) {

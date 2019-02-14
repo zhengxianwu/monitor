@@ -63,7 +63,6 @@ public class MetricbeatController {
 		JSONObject used = actual.getJSONObject("used");
 		String pct = used.getString("pct");
 		pct = MyDataUtil.formatDouble(Double.parseDouble(pct)*100);
-		System.out.println(used.getString("pct"));
 		return pct;
 		
 	}
@@ -80,7 +79,7 @@ public class MetricbeatController {
 		date = null;
 		List<String> filesystemNewData = metricbeat.getMetricNewData(client, indexName, ESType.filesystem);
 		JSONArray fromObject = JSONArray.fromObject(filesystemNewData);
-		System.out.println(fromObject.toString());
+//		System.out.println(fromObject.toString());
 		return fromObject.toString();
 	}
 	

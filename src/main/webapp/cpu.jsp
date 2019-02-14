@@ -103,7 +103,7 @@
             }
 
 
-            cpu("container", "metricbeat/getCPU", 60000);
+            cpu("container", "metricbeat/getMemory", 60000);
 
             // var dom = document.getElementById("container");
             // var myChart = echarts.init(dom);

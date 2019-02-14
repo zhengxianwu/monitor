@@ -42,16 +42,16 @@
                     $("#hk").before(dom);
                 }
                 //第一次赋值
-                showPro2(arr, 20);
+                showPro(arr);
 
                 //定时循环
 
 
 
-                showPro(getData("metricbeat/getCPU"));
-                //setInterval(function() {
-                //    showPro(getData("metricbeat/getCPU"));
-                //}, 2000);
+               // showPro(getData("metricbeat/getCPU"));
+               setInterval(function() {
+                    showPro(eval("(" + getData("metricbeat/getFilesystem") + ")"));
+                }, 2000);
 
 
 
