@@ -29,13 +29,35 @@ public class MonitorApplicationTests {
 	private String ip = "127.0.0.1";
 	private String cluster_name = "elasticsearch";
 	private int port = 9300;
-	private String index = "metricbeat-6.5.0";
 	private String index_home = "metricbeat-6.4.3";
 	@Autowired
 	private TestDemo test;
 	
 	@Autowired
 	private Metircbeat metricbeat;
+	
+	
+	@Test
+	public void Cpu() throws UnknownHostException {
+		TransportClient client = metricbeat.getClient(cluster_name, ip, port);
+		Date date = new Date();
+		String indexName = String.format(index_home+"-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
+		date = null;
+		String[] localToUTC = MyTimeUtil.getLocalToUTC();
+		System.out.println(localToUTC[0] + "---" + localToUTC[1]);
+		List<String> rangeSearch = new Metircbeat().RangeSearch(client, indexName, localToUTC[0], localToUTC[1], ESType.process.toString());
+//		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.process);
+		for(String s : rangeSearch) {
+			System.out.println(s);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 //	@Test
 //	public void contextLoads() {
@@ -64,36 +86,36 @@ public class MonitorApplicationTests {
 //	}
 
 	
-	@Test
-	public void Cpu() throws UnknownHostException {
-		TransportClient client = metricbeat.getClient(cluster_name, ip, port);
-		Date date = new Date();
-//		String indexName = String.format("metricbeat-6.5.0-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
-		String indexName = String.format(index_home+"-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
-		date = null;
-//		system.cpu.system.pct
-//		system.cpu.user.pct
-		String[] localToUTC = MyTimeUtil.getLocalToUTC();
-		System.out.println(localToUTC[0] + "---" + localToUTC[1]);
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.cpu);
-		JSONObject json = JSONObject.fromObject(metricNewData.get(0));
-		JSONObject system = json.getJSONObject("system");
-		JSONObject cpu = system.getJSONObject("cpu");
-		JSONObject system_cpu = cpu.getJSONObject("system");
-		JSONObject system_user = cpu.getJSONObject("user");
-		System.out.println(system_cpu.getString("pct"));
-		System.out.println(system_user.getString("pct"));
-		System.out.println(cpu.getString("cores"));
-		double cores = Double.valueOf(cpu.getString("cores"));
-		double system_cpu_value =  Double.valueOf(system_cpu.getString("pct"));
-		double system_user_value = Double.valueOf(system_user.getString("pct"));
-		double cpu_usage =  (system_cpu_value+system_user_value)/cores;
-		String formatDouble = MyDataUtil.formatDouble(cpu_usage*100);
-		System.out.println(formatDouble);
-		
-		
-	}
-	
+//	@Test
+//	public void Cpu() throws UnknownHostException {
+//		TransportClient client = metricbeat.getClient(cluster_name, ip, port);
+//		Date date = new Date();
+////		String indexName = String.format("metricbeat-6.5.0-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
+//		String indexName = String.format(index_home+"-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
+//		date = null;
+////		system.cpu.system.pct
+////		system.cpu.user.pct
+//		String[] localToUTC = MyTimeUtil.getLocalToUTC();
+//		System.out.println(localToUTC[0] + "---" + localToUTC[1]);
+//		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.cpu);
+//		JSONObject json = JSONObject.fromObject(metricNewData.get(0));
+//		JSONObject system = json.getJSONObject("system");
+//		JSONObject cpu = system.getJSONObject("cpu");
+//		JSONObject system_cpu = cpu.getJSONObject("system");
+//		JSONObject system_user = cpu.getJSONObject("user");
+//		System.out.println(system_cpu.getString("pct"));
+//		System.out.println(system_user.getString("pct"));
+//		System.out.println(cpu.getString("cores"));
+//		double cores = Double.valueOf(cpu.getString("cores"));
+//		double system_cpu_value =  Double.valueOf(system_cpu.getString("pct"));
+//		double system_user_value = Double.valueOf(system_user.getString("pct"));
+//		double cpu_usage =  (system_cpu_value+system_user_value)/cores;
+//		String formatDouble = MyDataUtil.formatDouble(cpu_usage*100);
+//		System.out.println(formatDouble);
+//		
+//		
+//	}
+//	
 	
 	
 	

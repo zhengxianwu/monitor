@@ -29,6 +29,11 @@ public class HelloController {
 	public String memory(Model mode) {
 		return "memory";
 	}
+	@RequestMapping("/process")
+	public String process(Model mode) {
+		return "Process";
+	}
+
 
 
 }

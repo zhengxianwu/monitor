@@ -34,6 +34,7 @@
 	width: 230px;
 	background-color: #222d32;
 }
+
 </style>
 
 
@@ -181,17 +182,29 @@
 			</div>
 			<div class="col-md-10">
 				<div class="row">
-					<div clss="col-md-1">
+					<div class="col-md-5">
 						<div id="momory" style="height: 500px; width: 500px;"></div>
 					</div>
-					<div clss="col-md-1">
+					<div class="col-md-5">
 						<div id="cpu" style="height: 500px; width: 500px;"></div>
 					</div>
-					<div clss="col-md-1">
-					<h1>磁盘状态</h1>
+
+				</div>
+
+				<div class="row">
+					<div class="col-md-5">
+						<h1>磁盘状态</h1>
 						<hr id="hk">
 					</div>
+					<div class="col-md-3">
+						<hr id="hk">
+					</div>
+					<div class="col-md-3">
+						<h1>磁盘状态</h1>
+						<hr id="process_hk">
+					</div>
 				</div>
+
 			</div>
 		</div>
 
@@ -205,20 +218,18 @@
 	<script src="dist/sidebar-menu.js"></script>
 	<script type="text/javascript" src="./js/Metricbeat.js"></script>
 	<script>
-            $.sidebarMenu($('.sidebar-menu'))
+		$.sidebarMenu($('.sidebar-menu'))
 
-            $("#systemInfo").click(function() {
-                $("#container").load("memory");
-                alert(123);
-            });
-            
-            
-            Metric("momory","内存使用率","metricbeat/getMemory",60000);
-            Metric("cpu","CPU使用率","metricbeat/getCPU",60000);
-            Filesystem(60000);
-            
-            
-        </script>
+		$("#systemInfo").click(function() {
+			$("#container").load("memory");
+			alert(123);
+		});
+
+		Metric("momory", "内存使用率", "metricbeat/getMemory", 60000);
+		Metric("cpu", "CPU使用率", "metricbeat/getCPU", 60000);
+		Filesystem(60000);
+		Process(60000);
+	</script>
 
 
 </body>

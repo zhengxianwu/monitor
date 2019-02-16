@@ -22,48 +22,39 @@ import com.monitor.monitor.service.util.MyTimeUtil;
 
 import net.sf.json.JSONObject;
 
-
 @Service
 @Scope("singleton")
 public class Metircbeat {
-	
+
 	private String ip = "127.0.0.1";
 	private String cluster_name = "elasticsearch";
 	private int port = 9300;
 	private String index = "metricbeat-6.5.0";
 	private String index_home = "metricbeat-6.4.3";
 	private TransportClient client = null;
-	
-	
-	
+
 	public Metircbeat() throws UnknownHostException {
 		super();
 		Settings settings = Settings.builder().put("cluster.name", this.cluster_name).build();
 		this.client = new PreBuiltTransportClient(settings)
 				.addTransportAddress(new TransportAddress(InetAddress.getByName(this.ip), this.port));// 这里端口不能与http的端口一样
 	}
-	
+
 	public TransportClient getClient() {
 		return this.client;
 	}
-	
-	
 
 	/**
-//	 * 获取客户端
-//	 * 
-//	 * @param ip   "127.0.0.1"
-//	 * @param port 9300
-//	 * @return
-//	 * @throws UnknownHostException
-//	 */
+	 * // * 获取客户端 // * // * @param ip "127.0.0.1" // * @param port 9300 // * @return
+	 * // * @throws UnknownHostException //
+	 */
 //	public TransportClient getClient() throws UnknownHostException {
 //		Settings settings = Settings.builder().put("cluster.name", this.cluster_name).build();
 //		TransportClient client = new PreBuiltTransportClient(settings)
 //				.addTransportAddress(new TransportAddress(InetAddress.getByName(this.ip), this.port));// 这里端口不能与http的端口一样
 //		return client;
 //	}
-	
+
 	/**
 	 * 获取客户端
 	 * 
@@ -110,6 +101,34 @@ public class Metircbeat {
 		return list;
 	}
 
+	/**
+	 * 获取指定时间范围和类型数据，返回json数据(降序DESC)
+	 * 
+	 * @param client    es链接客户端
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @param esTYPE    查询类型
+	 * @return 返回json集合
+	 */
+	public List<String> RangeSearch(TransportClient client, String indexName, String startTime, String endTime,
+			String esTYPE) {
+		List<String> list = null;
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("metricset.name", esTYPE))
+						.must(QueryBuilders.rangeQuery("@timestamp").lte(endTime).gte(startTime)))
+				.addSort("@timestamp", SortOrder.DESC).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hitsCount = hits.getHits();
+		if (hitsCount.length > 0) {
+			list = new ArrayList<String>();
+			for (int i = 0; i < hitsCount.length; i++) {
+				list.add(hitsCount[i].getSourceAsString());
+			}
+		}
+		return list;
+	}
+
 	/***
 	 * 获取Metricbeat 最新数据 （形参化）
 	 * 
@@ -124,11 +143,26 @@ public class Metircbeat {
 		List<String> rangeSearch = RangeSearch(client, indexName, localToUTC[0], localToUTC[1], e.toString(), 0, 1);
 
 		// 2、根据最新数据的timestamp获取批量数据
-		
-		String data = rangeSearch.get(0).toString();
+		String data = rangeSearch.get(0).toString(); // 这里会出错，因为时间问题，可能没有数据，考虑查询取第一条数据，exception：null
 		JSONObject json = JSONObject.fromObject(data);
 		List<String> sameTimeData = getSameTimeData(client, indexName, json.getString("@timestamp"), e);
 		return sameTimeData;
+	}
+
+	/***
+	 * 获取getProcessNewData 最新数据 （形参化）
+	 * 
+	 * @param client    客户端
+	 * @param indexName 索引名字
+	 * @param e         MeticBeat类型
+	 * @return 类型Json集合
+	 */
+	public List<String> getProcessNewData(TransportClient client, String indexName) {
+		// 1、获取最新一条数据
+		String[] localToUTC = MyTimeUtil.getLocalToUTC();
+		List<String> rangeSearch = RangeSearch(client, indexName, localToUTC[0], localToUTC[1],
+				ESType.process.toString());
+		return rangeSearch;
 	}
 
 	/**
