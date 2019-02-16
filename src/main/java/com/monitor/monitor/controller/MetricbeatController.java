@@ -118,8 +118,9 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> NewData = metricbeat.getProcessNewData(client, indexName);
-		JSONArray fromObject = JSONArray.fromObject(NewData);
+//		List<String> NewData = metricbeat.getProcessNewData(client, indexName);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.process);
+		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 //		System.out.println(fromObject.toString());
 		return fromObject.toString();
 

@@ -33,6 +33,11 @@ public class HelloController {
 	public String process(Model mode) {
 		return "Process";
 	}
+	@RequestMapping("/processcpu")
+	public String processcpu(Model mode) {
+		return "ProcessCpu";
+	}
+
 
 
 

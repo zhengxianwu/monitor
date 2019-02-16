@@ -196,9 +196,7 @@
 						<h1>磁盘状态</h1>
 						<hr id="hk">
 					</div>
-					<div class="col-md-3">
-						<hr id="hk">
-					</div>
+					
 					<div class="col-md-3">
 						<h1>磁盘状态</h1>
 						<hr id="process_hk">

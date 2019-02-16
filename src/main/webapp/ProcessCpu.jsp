@@ -41,9 +41,9 @@
 			//console.log("arr:" + arr.length)
 			for (var a in arr) {
 				// console.log(arr[a]);
-				console.log(arr[a].system.process.name + ":" + arr[a].system.process.memory.rss.pct);
+				console.log(arr[a].system.process.name + ":" + arr[a].system.process.cpu.total.pct);
 				console.log( arr[a]);
-				objectList.push(new process_memory(arr[a].system.process.name,arr[a].system.process.memory.rss.pct))
+				objectList.push(new process_memory(arr[a].system.process.name,arr[a].system.process.cpu.total.pct))
 			}
 
 			objectList.sort(function(a,b){

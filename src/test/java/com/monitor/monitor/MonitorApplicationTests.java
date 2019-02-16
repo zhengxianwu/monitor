@@ -48,6 +48,7 @@ public class MonitorApplicationTests {
 		List<String> rangeSearch = new Metircbeat().RangeSearch(client, indexName, localToUTC[0], localToUTC[1], ESType.process.toString());
 //		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.process);
 		for(String s : rangeSearch) {
+			System.out.println("---------------------");
 			System.out.println(s);
 		}
 		
