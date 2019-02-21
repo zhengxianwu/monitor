@@ -1,23 +1,31 @@
 package com.monitor.monitor;
 
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.monitor.monitor.been.TestDemo;
-import com.monitor.monitor.service.metricbeat.ESType;
+import com.monitor.monitor.es.ESClient;
+import com.monitor.monitor.es.ESType;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
-import com.monitor.monitor.service.util.MyDataUtil;
 import com.monitor.monitor.service.util.MyTimeUtil;
 
 import net.sf.json.JSONObject;
@@ -26,40 +34,89 @@ import net.sf.json.JSONObject;
 @SpringBootTest
 public class MonitorApplicationTests {
 
-	private String ip = "127.0.0.1";
-	private String cluster_name = "elasticsearch";
+	private String ip = "192.168.126.1";
+	private String cluster_name = "home";
 	private int port = 9300;
 	private String index_home = "metricbeat-6.4.3";
+	private String hostname_1 = "zhengxian";
+	private String hostname_2 = "elastic-128";
+
 	@Autowired
 	private TestDemo test;
-	
+
 	@Autowired
 	private Metircbeat metricbeat;
+
+	@Autowired
+//	@Qualifier("client")
+	private ESClient esClient;
+
+	
+	
+	
 	
 	
 	@Test
-	public void Cpu() throws UnknownHostException {
-		TransportClient client = metricbeat.getClient(cluster_name, ip, port);
-		Date date = new Date();
-		String indexName = String.format(index_home+"-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
-		date = null;
-		String[] localToUTC = MyTimeUtil.getLocalToUTC();
-		System.out.println(localToUTC[0] + "---" + localToUTC[1]);
-		List<String> rangeSearch = new Metircbeat().RangeSearch(client, indexName, localToUTC[0], localToUTC[1], ESType.process.toString());
-//		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.process);
-		for(String s : rangeSearch) {
-			System.out.println("---------------------");
-			System.out.println(s);
+	public void newdate() {
+		TransportClient client = null;
+		try {
+			client = esClient.getClient();
+			client = esClient.getClient();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
+		if (client != null) {
+
+			String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(new Date())); // 当天index
+//			List<String> rangeSearch = metricbeat.RangeSearch(client, indexName, hostname_2, ESType.cpu);
+			List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname_2, ESType.cpu);
+			for (String s : metricNewData) {
+				System.out.println(s);
+			}
+		}
 	}
-	
-	
-	
-	
-	
-	
-	
+
+//	@Test
+//	public void home() throws UnknownHostException {
+//
+//		TransportClient client = esClient.getClient(cluster_name, ip, port, true);
+//		
+//		// 嗅探功能("client.transport.sniff", true)
+//		if (client != null) {
+//			System.out.println("链接成功");
+//			System.out.println(client.toString());
+//		}
+//		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(new Date())); // 当天index
+//		SearchRequestBuilder bulider = client.prepareSearch(indexName).setTypes("doc");
+//		SearchResponse actionGet = bulider
+//				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("beat.hostname", "elastic-128"))
+//						.filter(QueryBuilders.termQuery("metricset.name", ESType.cpu.toString())))
+//				.addSort("@timestamp", SortOrder.DESC).setExplain(true).execute().actionGet();
+//		for (SearchHit hit : actionGet.getHits().getHits()) {
+//			System.out.println(hit.getSourceAsString());
+//
+//		}
+//
+//	}
+
+//	@Test
+//	public void Cpu() throws UnknownHostException {
+//		TransportClient client = metricbeat.getClient(cluster_name, ip, port);
+//		Date date = new Date();
+//		String indexName = String.format(index_home+"-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
+//		date = null;
+//		String[] localToUTC = MyTimeUtil.getLocalToUTC();
+//		System.out.println(localToUTC[0] + "---" + localToUTC[1]);
+//		List<String> rangeSearch = new Metircbeat().RangeSearch(client, indexName, localToUTC[0], localToUTC[1], ESType.process.toString());
+////		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, ESType.process);
+//		for(String s : rangeSearch) {
+//			System.out.println("---------------------");
+//			System.out.println(s);
+//		}
+//		
+//	}
+
 //	@Test
 //	public void contextLoads() {
 //		System.out.println(test.test());
@@ -67,7 +124,7 @@ public class MonitorApplicationTests {
 //			System.out.println(e);
 //		}
 //	}
-	
+
 //	@Test
 //	public void MetricTest() throws UnknownHostException {
 //		TransportClient client = metricbeat.getClient(cluster_name, ip, port);
@@ -86,7 +143,6 @@ public class MonitorApplicationTests {
 //		client.close();
 //	}
 
-	
 //	@Test
 //	public void Cpu() throws UnknownHostException {
 //		TransportClient client = metricbeat.getClient(cluster_name, ip, port);
@@ -117,21 +173,5 @@ public class MonitorApplicationTests {
 //		
 //	}
 //	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-}
 
+}

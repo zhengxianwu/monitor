@@ -24,7 +24,7 @@
                     type: "GET",
                     url: "/" + url,
                     async: false,
-                    data: "",
+                    data: "hostname=zhengxian",
                     success: function(data) {
                         k = data;
                         console.log(k);
@@ -157,4 +157,4 @@
         </script>
     </body>
 
-    </html> c
+    </html> 

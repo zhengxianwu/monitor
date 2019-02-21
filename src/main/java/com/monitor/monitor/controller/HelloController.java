@@ -19,10 +19,9 @@ public class HelloController {
 		return "index";
 	}
 	
-	
 	@RequestMapping("/cpu")
 	public String cpu(Model model,@RequestParam(value="name",required=false,defaultValue="zhansang") String name) {
-		model.addAttribute("name", name);
+		model.addAttribute("name", name);//${name}读法
 		return "cpu";
 	}
 	@RequestMapping("/memory")

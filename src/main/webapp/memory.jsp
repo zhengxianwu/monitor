@@ -35,7 +35,7 @@
 				type : "GET",
 				url : "/metricbeat/getMemory",
 				async : false,
-				data : "",
+				data : "hostname=elastic-128",
 				success : function(data) {
 					k = data;
 					console.log(k);
