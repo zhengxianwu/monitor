@@ -1,5 +1,5 @@
 package com.monitor.monitor.es;
 
-public enum ESType {
+public enum MetricSystemType {
 	network, process_summary, memory, cpu, status, fsstat, filesystem, process
 }

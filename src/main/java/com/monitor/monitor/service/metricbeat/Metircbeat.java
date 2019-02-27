@@ -18,7 +18,7 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.monitor.monitor.es.ESType;
+import com.monitor.monitor.es.MetricSystemType;
 import com.monitor.monitor.service.util.MyTimeUtil;
 
 import net.sf.json.JSONObject;
@@ -67,7 +67,7 @@ public class Metircbeat {
 	 * @param e         MeticBeat类型
 	 * @return 类型Json集合
 	 */
-	public List<String> getMetricNewData(TransportClient client, String indexName, ESType e) {
+	public List<String> getMetricNewData(TransportClient client, String indexName, MetricSystemType e) {
 		// 1、获取最新一条数据
 		String[] localToUTC = MyTimeUtil.getLocalToUTC();
 		List<String> rangeSearch = RangeSearch(client, indexName, localToUTC[0], localToUTC[1], e.toString(), 0, 1);
@@ -103,7 +103,7 @@ public class Metircbeat {
 	 * @param e         获取的数据类型，如：process,network等不确定数量的数据
 	 * @return 返回相同时间的数据
 	 */
-	public List<String> getSameTimeData(TransportClient client, String indexName, String timestamp, ESType e) {
+	public List<String> getSameTimeData(TransportClient client, String indexName, String timestamp, MetricSystemType e) {
 		List<String> list = new ArrayList<String>();
 		/**
 		 * 过滤不固定数值的思路 1、获取时间段的数据，时间排序，然后取第一条 2、再根据第一条的时间，取筛选数据
@@ -135,7 +135,7 @@ public class Metircbeat {
 	 * @param hostname 节点名字
 	 * @return 返回集合（数据是json格式）
 	 */
-	public List<String> RangeSearch(TransportClient client, String indexName, String hostname, ESType esTYPE) {
+	public List<String> RangeSearch(TransportClient client, String indexName, String hostname, MetricSystemType esTYPE) {
 		List<String> list = null;
 		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
 		SearchResponse actionGet = b
@@ -162,7 +162,7 @@ public class Metircbeat {
 	 * @param e         MeticBeat类型
 	 * @return 类型Json集合
 	 */
-	public List<String> getMetricNewData(TransportClient client, String indexName,String hostname, ESType e) {
+	public List<String> getMetricNewData(TransportClient client, String indexName,String hostname, MetricSystemType e) {
 		// 1、获取最新一条数据
 		List<String> rangeSearch = RangeSearch(client, indexName, hostname, e);
 
@@ -183,7 +183,7 @@ public class Metircbeat {
 	 * @param e         获取的数据类型，如：process,network等不确定数量的数据
 	 * @return 返回相同时间的数据
 	 */
-	public List<String> getSameTimeData(TransportClient client, String indexName,String hostname, String timestamp, ESType e) {
+	public List<String> getSameTimeData(TransportClient client, String indexName,String hostname, String timestamp, MetricSystemType e) {
 		List<String> list = new ArrayList<String>();
 		/**
 		 * 过滤不固定数值的思路 1、获取时间段的数据，时间排序，然后取第一条 2、再根据第一条的时间，取筛选数据

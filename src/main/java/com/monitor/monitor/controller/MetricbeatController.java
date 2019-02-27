@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.monitor.monitor.es.ESClient;
-import com.monitor.monitor.es.ESType;
+import com.monitor.monitor.es.MetricSystemType;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 import com.monitor.monitor.service.util.MyDataUtil;
 
@@ -53,7 +53,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.memory);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.memory);
 		String pct = JSONObject.fromObject(metricNewData.get(0)).getJSONObject("system").getJSONObject("memory")
 				.getJSONObject("actual").getJSONObject("used").getString("pct");
 		pct = MyDataUtil.formatDouble(Double.parseDouble(pct) * 100);
@@ -84,7 +84,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> NewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.cpu);
+		List<String> NewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.cpu);
 		JSONObject json = JSONObject.fromObject(NewData.get(0));
 		JSONObject system = json.getJSONObject("system");
 		JSONObject cpu = system.getJSONObject("cpu");
@@ -117,7 +117,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> filesystemNewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.filesystem);
+		List<String> filesystemNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.filesystem);
 		JSONArray fromObject = JSONArray.fromObject(filesystemNewData);
 		return fromObject.toString();
 	}
@@ -141,7 +141,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.process);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.process);
 		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 		return fromObject.toString();
 	}
@@ -165,7 +165,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.network);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.network);
 		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 		return fromObject.toString();
 	}
@@ -189,7 +189,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.process_summary);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.process_summary);
 		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 		return fromObject.toString();
 	}
@@ -213,7 +213,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.status);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.status);
 		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 		return fromObject.toString();
 	}
@@ -237,7 +237,7 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, ESType.fsstat);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.fsstat);
 		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 		return fromObject.toString();
 	}

@@ -20,7 +20,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
-import com.monitor.monitor.es.ESType;
+import com.monitor.monitor.es.MetricSystemType;
 
 public class ES {
 
@@ -81,7 +81,7 @@ public class ES {
 		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
 		SearchResponse actionGet = b
 				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("beat.hostname", "elastic-128"))
-						.filter(QueryBuilders.termQuery("metricset.name", ESType.cpu.toString())))
+						.filter(QueryBuilders.termQuery("metricset.name", MetricSystemType.cpu.toString())))
 				.addSort("@timestamp", SortOrder.DESC)
 				.setExplain(true)
 				.execute()

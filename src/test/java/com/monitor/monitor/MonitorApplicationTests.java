@@ -24,7 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.monitor.monitor.been.TestDemo;
 import com.monitor.monitor.es.ESClient;
-import com.monitor.monitor.es.ESType;
+import com.monitor.monitor.es.MetricSystemType;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 import com.monitor.monitor.service.util.MyTimeUtil;
 
@@ -70,7 +70,7 @@ public class MonitorApplicationTests {
 
 			String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(new Date())); // 当天index
 //			List<String> rangeSearch = metricbeat.RangeSearch(client, indexName, hostname_2, ESType.cpu);
-			List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname_2, ESType.cpu);
+			List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname_2, MetricSystemType.cpu);
 			for (String s : metricNewData) {
 				System.out.println(s);
 			}
