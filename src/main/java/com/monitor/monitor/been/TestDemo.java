@@ -11,7 +11,7 @@ public class TestDemo {
 
 	public TestDemo() {
 		super();
-		System.out.println("构造一次");
+//		System.out.println("构造一次");
 		// TODO Auto-generated constructor stub
 	}
 

@@ -1,48 +1,36 @@
 package com.monitor.monitor;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.sort.SortOrder;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.monitor.monitor.been.TestDemo;
 import com.monitor.monitor.es.ESClient;
 import com.monitor.monitor.es.MetricSystemType;
+import com.monitor.monitor.properties.ESConfig;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
-import com.monitor.monitor.service.util.MyTimeUtil;
-
-import net.sf.json.JSONObject;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@EnableConfigurationProperties(ESConfig.class)
 public class MonitorApplicationTests {
 
-	private String ip = "192.168.126.1";
-	private String cluster_name = "home";
-	private int port = 9300;
+	private String ip = "192.168.20.1";
+//	private String cluster_name = "home";
+//	private int port = 9300;
 	private String index_home = "metricbeat-6.4.3";
 	private String hostname_1 = "zhengxian";
 	private String hostname_2 = "elastic-128";
-
-	@Autowired
-	private TestDemo test;
 
 	@Autowired
 	private Metircbeat metricbeat;
@@ -52,10 +40,27 @@ public class MonitorApplicationTests {
 	private ESClient esClient;
 
 	
+	@Value("${es.master}")
+	private String master;
 	
+	@Value("${es.cluster_name}")
+	private String cluster_name;
 	
+	@Value("${es.port}")
+	private int port;
 	
+	@Value("${es.metric_version}")
+	private String metric_version;
 	
+	@Test
+	public void tes() {
+		System.out.println(master);
+		System.out.println(cluster_name);
+		System.out.println(port);
+		System.out.println(metric_version);
+		
+	}
+
 	@Test
 	public void newdate() {
 		TransportClient client = null;
@@ -70,7 +75,8 @@ public class MonitorApplicationTests {
 
 			String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(new Date())); // 当天index
 //			List<String> rangeSearch = metricbeat.RangeSearch(client, indexName, hostname_2, ESType.cpu);
-			List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname_2, MetricSystemType.cpu);
+			List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname_2,
+					MetricSystemType.cpu);
 			for (String s : metricNewData) {
 				System.out.println(s);
 			}

@@ -30,7 +30,7 @@ public class ES {
 	 */
 	public static void main(String[] args) throws UnknownHostException {
 		// TODO Auto-generated method stub
-		String ip = "192.168.126.1";
+		String ip = "192.168.20.1";
 		String cluster_name = "home";
 		int port = 9300;
 		String index_home = "metricbeat-6.4.3";
