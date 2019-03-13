@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.monitor.monitor.been.TestDemo;
 import com.monitor.monitor.es.ESClient;
-import com.monitor.monitor.es.MetricSystemType;
+import com.monitor.monitor.es.type.MetricSystemType;
 import com.monitor.monitor.properties.ESConfig;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 

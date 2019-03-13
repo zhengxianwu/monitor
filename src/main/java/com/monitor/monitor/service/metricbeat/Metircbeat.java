@@ -18,7 +18,7 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.monitor.monitor.es.MetricSystemType;
+import com.monitor.monitor.es.type.MetricSystemType;
 import com.monitor.monitor.service.util.MyTimeUtil;
 
 import net.sf.json.JSONObject;
@@ -191,7 +191,9 @@ public class Metircbeat {
 		// 尝试匹配id
 		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
 		SearchResponse actionGet = b
-				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("metricset.name", e.toString()))
+				.setQuery(QueryBuilders.boolQuery()
+						.filter(QueryBuilders.termQuery("metricset.module", "system"))
+						.filter(QueryBuilders.termQuery("metricset.name", e.toString()))
 						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
 						.must(QueryBuilders.rangeQuery("@timestamp").lte(timestamp).gte(timestamp)))
 				.addSort("@timestamp", SortOrder.DESC).setExplain(true).execute().actionGet();
@@ -210,10 +212,32 @@ public class Metircbeat {
 	
 	/**
 	 * 根据时间来获取数据（以时间范围来获取） 如：获取像要获取某一分钟数据
-	 * 1、先获取时间（分钟），再去这一分钟得范围，如取12：30得数据,就去12:30:00 - 12:30:59 2、只要做时间处理即可， 3、读取数据
+	 * @param client
+	 * @param indexName 
+	 * @param hostname
+	 * @param startTime 开始时间（本地）格式："2019-3-7 10:00:27"
+	 * @param endTime  结束时间（本地）格式："2019-3-7 10:00:27"
+	 * @param e
+	 * @return
 	 */
-	public List<String> rangeTime(){
-			return null;
+	public List<String> rangeTime(TransportClient client, String indexName,String hostname, String startTime,String endTime, MetricSystemType e){
+		List<String> list = new ArrayList<String>();
+		// 尝试匹配id
+		startTime = MyTimeUtil.getLocalToUTC(startTime);
+		endTime = MyTimeUtil.getLocalToUTC(endTime);
+		System.out.println(startTime + "----" + endTime);
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("metricset.name", e.toString()))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
+						.must(QueryBuilders.rangeQuery("@timestamp").lte(endTime).gte(startTime)))
+				.addSort("@timestamp", SortOrder.DESC).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hits2 = hits.getHits();
+		for (SearchHit s : hits2) {
+			list.add(s.getSourceAsString());
+		}
+		return list;
 	}
 
 }

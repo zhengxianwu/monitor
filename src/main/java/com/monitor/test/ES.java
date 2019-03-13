@@ -20,7 +20,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
-import com.monitor.monitor.es.MetricSystemType;
+import com.monitor.monitor.es.type.MetricSystemType;
 
 public class ES {
 
@@ -93,6 +93,9 @@ public class ES {
 
 	}
 
+	
+	
+	
 }
 
 

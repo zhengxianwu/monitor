@@ -54,6 +54,38 @@ public class MyTimeUtil {
 		arr[0] = start;
 		return arr;
 	}
+	
+	
+	/**
+	 * local转Utc
+	 * 
+	 * @param localTime
+	 * @return Utc
+	 */
+	public static String getLocalToUTC(String localtime) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date localDate= null;
+        try {
+            localDate = sdf.parse(localtime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long localTimeInMillis=localDate.getTime();
+        /** long时间转换成Calendar */
+        Calendar calendar= Calendar.getInstance();
+        calendar.setTimeInMillis(localTimeInMillis);
+        /** 取得时间偏移量 */
+        int zoneOffset = calendar.get(java.util.Calendar.ZONE_OFFSET);
+        /** 取得夏令时差 */
+        int dstOffset = calendar.get(java.util.Calendar.DST_OFFSET);
+        /** 从本地时间里扣除这些差量，即可以取得UTC时间*/
+        calendar.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
+        /** 取得的时间就是UTC标准时间 */
+        Date utcDate=new Date(calendar.getTimeInMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		String end = dateFormat.format(utcDate);// 将本地日期格式化为UTC格式的 日期字符串
+        return end;
+	}
 
 	/**
 	 * utc转local
@@ -61,10 +93,8 @@ public class MyTimeUtil {
 	 * @param utcTime
 	 * @return
 	 */
-	public static String UtctoLoaclTime(String utcTime) {
-		String time = "2019-01-18T01:13:40.581Z";
+	public static String UtctoLoaclTime(String time) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		System.out.println(TimeZone.getTimeZone("UTC"));
 		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date UtcDate = null;
 		try {
@@ -116,7 +146,6 @@ public class MyTimeUtil {
 		arr[1] = start;
 		return arr;
 	}
-
 
 
 	/**

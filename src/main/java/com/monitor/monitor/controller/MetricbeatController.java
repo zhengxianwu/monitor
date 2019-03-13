@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.monitor.monitor.es.ESClient;
-import com.monitor.monitor.es.MetricSystemType;
+import com.monitor.monitor.es.type.MetricSystemType;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 import com.monitor.monitor.service.util.MyDataUtil;
 
@@ -26,19 +26,16 @@ public class MetricbeatController {
 
 	@Value("${es.metric_version}")
 	private String metric_version;
-	
+
 	@Autowired
 	private Metircbeat metricbeat;
-	
-	
+
 	@Autowired
 //	@Qualifier("client")
 	private ESClient esClient;
 
 	// hostname节点名称是根据ip映射电脑名称
 
-	
-	
 	/**
 	 * 读取系统内存信息
 	 * 
@@ -66,7 +63,7 @@ public class MetricbeatController {
 		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 		return fromObject.toString();
 	}
-	
+
 	/**
 	 * 读取系统Cpu信息
 	 * 
@@ -83,7 +80,7 @@ public class MetricbeatController {
 		TransportClient client = null;
 		try {
 			client = esClient.getClient();
-			System.out.println("ok");
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,7 +112,8 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(metric_version + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> filesystemNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.filesystem);
+		List<String> filesystemNewData = metricbeat.getMetricNewData(client, indexName, hostname,
+				MetricSystemType.filesystem);
 		JSONArray fromObject = JSONArray.fromObject(filesystemNewData);
 		return fromObject.toString();
 	}
@@ -187,7 +185,8 @@ public class MetricbeatController {
 		Date date = new Date();
 		String indexName = String.format(metric_version + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
 		date = null;
-		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.process_summary);
+		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname,
+				MetricSystemType.process_summary);
 		JSONArray fromObject = JSONArray.fromObject(metricNewData);
 		return fromObject.toString();
 	}
@@ -240,113 +239,32 @@ public class MetricbeatController {
 		return fromObject.toString();
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//---------------------------------------------------------------------
-//	/**
-//	 * 读取系统内存信息
-//	 * 
-//	 * @author wuzhe
-//	 * @param hostname 节点名称
-//	 * @return 返回系统内存使用的百分比 @
-//	 */
-//	@RequestMapping(value = "/metricbeat/getMemory", method = RequestMethod.GET)
-//	public String getMemory(@RequestParam(value = "hostname", required = false) String hostname) {
-////		system.memory.actual.used.pct
-////		类型：scaled_float
-////		格式：百分比
-////		实际使用内存的百分比。
-//		TransportClient client = null;
-//		try {
-//			client = esClient.getClient();
-//		} catch (UnknownHostException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		Date date = new Date();
-//		String indexName = String.format(metric_version + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
-//		date = null;
-//		List<String> metricNewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.memory);
-//		String pct = JSONObject.fromObject(metricNewData.get(0)).getJSONObject("system").getJSONObject("memory")
-//				.getJSONObject("actual").getJSONObject("used").getString("pct");
-//		pct = MyDataUtil.formatDouble(Double.parseDouble(pct) * 100);
-//		return pct;
-//	}
-	
-	
+	// ---------------------------------------根据索引时间和主机名称-----------------------------------------------------
+
 	/**
-//	 * 读取系统Cpu信息
-//	 * 
-//	 * @author wuzhe
-//	 * @param hostname hostname 节点名称
-//	 * @return 返回系统cpu使用百分比 @
-//	 */
-//	@RequestMapping(value = "/metricbeat/getCPU", method = RequestMethod.GET)
-//	public String getCPU(@RequestParam(value = "hostname", required = false) String hostname) {
-////		system.cpu.total.pct
-////		类型：scaled_float
-////		格式：百分比
-////		在Idle和IOWait以外的状态下花费的CPU时间百分比。
-//		TransportClient client = null;
-//		try {
-//			client = esClient.getClient();
-//			System.out.println("ok");
-//		} catch (UnknownHostException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		Date date = new Date();
-//		String indexName = String.format(metric_version + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(date)); // 当天index
-//		date = null;
-//		List<String> NewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.cpu);
-//		JSONObject json = JSONObject.fromObject(NewData.get(0));
-//		JSONObject system = json.getJSONObject("system");
-//		JSONObject cpu = system.getJSONObject("cpu");
-//		JSONObject system_cpu = cpu.getJSONObject("system");
-//		JSONObject system_user = cpu.getJSONObject("user");
-//		double cores = Double.valueOf(cpu.getString("cores"));
-//		double system_cpu_value = Double.valueOf(system_cpu.getString("pct"));
-//		double system_user_value = Double.valueOf(system_user.getString("pct"));
-//		double cpu_usage = (system_cpu_value + system_user_value) / cores;
-//		String value = MyDataUtil.formatDouble(cpu_usage * 100);
-//		return value;
-//	}
-	
-	
-	
-	
-	
-	
-	
-	
+	 * 读取系统Cpu信息
+	 * 
+	 * @author wuzhe
+	 * @param hostname  hostname 节点名称
+	 * @param indexTime 格式= 2019-03-06 ；生成 metricbeat-6.4.3-2019.03.06
+	 * @return 返回系统cpu使用百分比 @
+	 */
+	@RequestMapping(value = "/metricbeat/getCPUIndexTime", method = RequestMethod.GET)
+	public String getCPU(@RequestParam(value = "hostname", required = false) String hostname,
+			@RequestParam(value = "indexTime", required = false) String indexTime) {
+		TransportClient client = null;
+		try {
+			client = esClient.getClient();
+
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String indexName = MyDataUtil.getIndexFormat(metric_version, indexTime);
+		List<String> NewData = metricbeat.getMetricNewData(client, indexName, hostname, MetricSystemType.cpu);
+		JSONArray fromObject = JSONArray.fromObject(NewData);
+		return fromObject.toString();
+	}
+
+
 }
