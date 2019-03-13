@@ -53,62 +53,61 @@ public class FileModuleTest {
 	@Test
 	public void Test() throws UnknownHostException {
 		TransportClient client = esClient.getClient();
-		String indexName = MyDataUtil.getIndexFormat(fileset_version);
-//		List<String> rangeSearch = esOperate.RangeSearch(client, indexName, hostname, Beat.fileset, 
-//				FilesetModule.mysql);
+		String indexName = MyDataUtil.getIndexFormat(metric_version);
 
-		List<String> newData = esOperate.getNewData(client, indexName, hostname, Beat.fileset.toString(), FilesetModule.mysql.toString(), SortOrder.DESC);
+		List<String> newData = esOperate.getNewData(client, indexName, hostname, Beat.metricset.toString(), MetricModule.system.toString(), SortOrder.DESC);
 		for (String s : newData) {
 			System.out.println(s);
 		}
 	}
-//	
-//	@Test
-//	public void Test2() throws UnknownHostException {
-//		TransportClient client = esClient.getClient();
-//		String indexName = MyDataUtil.getIndexFormat(fileset_version);
-////		List<String> rangeSearch = esOperate.RangeSearch(client, indexName, hostname, Beat.fileset, 
+	
+	@Test
+	public void Test2() throws UnknownHostException {
+		TransportClient client = esClient.getClient();
+		String indexName = MyDataUtil.getIndexFormat(fileset_version);
+//		List<String> rangeSearch = esOperate.RangeSearch(client, indexName, hostname, Beat.fileset, 
+//				FilesetModule.mysql);
+
+		String startTime = "2019-1-13 10:00:27";
+		String endTime = "2019-3-13 12:00:27";
+		List<String> newData = esOperate.rangeTime(client, "filebeat-*", hostname, startTime, endTime, Beat.fileset.toString(), FilesetModule.mysql.toString(), 0, 100,SortOrder.DESC);
+		for (String s : newData) {
+			System.out.println(s);
+		}
+	}
 ////				FilesetModule.mysql);
-//
-//		String startTime = "2019-1-13 10:00:27";
-//		String endTime = "2019-3-13 12:00:27";
-//		List<String> newData = esOperate.rangeTime(client, "filebeat-*", hostname, startTime, endTime, Beat.fileset.toString(), FilesetModule.mysql.toString(), 0, 100,SortOrder.DESC);
-//		for (String s : newData) {
-//			System.out.println(s);
-//		}
-//	}
-//	
-//	@Test
-//	public void Test3() throws UnknownHostException {
-//		TransportClient client = esClient.getClient();
-//		SearchRequestBuilder b = client.prepareSearch("filebeat-*").setTypes("doc");
-//		SearchResponse actionGet = b
-//				.setQuery(QueryBuilders.boolQuery()
-//						.filter(QueryBuilders.termQuery("fileset.module", "mysql"))
-//						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
-//						.must(QueryBuilders.rangeQuery("@timestamp").lte("2019-03-13T04:00:27.000Z").gte("2019-01-13T02:00:27.000Z")))
-//				.addSort("@timestamp", SortOrder.DESC).setExplain(true).execute().actionGet();
-//		SearchHits hits = actionGet.getHits();
-//		SearchHit[] hits2 = hits.getHits();
-//		for(SearchHit s : hits2) {
-//			System.out.println(s.getSourceAsString());
-//		}
-//	}
-//	
-//	//查询索引所有数据
-//	@Test
-//	public void Test4() throws UnknownHostException {
-//		TransportClient client = esClient.getClient();
-//		SearchRequestBuilder b = client.prepareSearch("filebeat-*").setTypes("doc");
-//		SearchResponse actionGet = b
-//				.setQuery(QueryBuilders.matchAllQuery()).setSize(100).setExplain(true).execute().actionGet();
-//		SearchHits hits = actionGet.getHits();
-//		for(SearchHit s : hits) {
-//			System.out.println(s.getSourceAsString());
-//		}
-//	}
-//
-//	
+	
+	@Test
+	public void Test3() throws UnknownHostException {
+		TransportClient client = esClient.getClient();
+		SearchRequestBuilder b = client.prepareSearch("filebeat-*").setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery()
+						.filter(QueryBuilders.termQuery("fileset.module", "mysql"))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
+						.must(QueryBuilders.rangeQuery("@timestamp").lte("2019-03-13T04:00:27.000Z").gte("2019-01-13T02:00:27.000Z")))
+				.addSort("@timestamp", SortOrder.DESC).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hits2 = hits.getHits();
+		for(SearchHit s : hits2) {
+			System.out.println(s.getSourceAsString());
+		}
+	}
+	
+	//查询索引所有数据
+	@Test
+	public void Test4() throws UnknownHostException {
+		TransportClient client = esClient.getClient();
+		SearchRequestBuilder b = client.prepareSearch("filebeat-*").setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.matchAllQuery()).setSize(100).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		for(SearchHit s : hits) {
+			System.out.println(s.getSourceAsString());
+		}
+	}
+
+	
 	@Test
 	public void Test5() throws UnknownHostException {
 		TransportClient client = esClient.getClient();

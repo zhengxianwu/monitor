@@ -13,7 +13,7 @@
 	<artifactId>monitor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>monitor</name>
-	<description>Demo project for Spring Boot</description>
+	<description>project for Spring Boot</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -75,10 +75,10 @@
 
 		<!-- mysql的依赖包 -->
 		<dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.25</version>
-        </dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.25</version>
+		</dependency>
 
 		<!-- elasticsearch的依赖包 -->
 		<dependency>
@@ -99,10 +99,50 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!--解决SpringBoot打包成jar后运行提示没有主清单属性 -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
+
+
+		<!-- 打包成jar的时候会找不到jsp文件 只需要 在pom.xml文件添加 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/**</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<!-- 指定resources插件处理哪个目录下的资源文件 -->
+				<directory>src/main/webapp</directory>
+				<!--注意此次必须要放在此目录下才能被访问到 -->
+				<targetPath>META-INF/resources/webapp/</targetPath>
+				<includes>
+					<include>**/**</include>
+				</includes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+
 	</build>
+
+
+
+
 
 </project>
