@@ -42,6 +42,17 @@ public class ESQueryController {
 	@Autowired
 	private ESOperate esOperate;
 
+	
+	/**
+	 * 获取最新数据 
+	 * @param hostname    主机名称 (hostname)
+	 * @param indexName   索引名字 metric
+	 * @param beatName        插件名称 metricset
+	 * @param module 插件数据模块名称  如：metricset
+	 * @param name   插件数据名称 如：system
+	 * @param sortOrder   排序方法 SortOrder.DESC降序
+	 * @return 默认返回最新几条数据
+	 */
 	@RequestMapping(value = "/ESQuery/getNewData", method = RequestMethod.GET)
 	public String getCPU(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "indexName", required = true) String indexName,
@@ -63,7 +74,6 @@ public class ESQueryController {
 		}else {
 			indexName = MyDataUtil.getIndexFormat(metric_version);
 		}
-		System.out.println(indexName);
 		
 		SortOrder Order;
 		if (sortOrder == "desc") {
@@ -72,10 +82,10 @@ public class ESQueryController {
 			Order = SortOrder.ASC;
 		}
 		
-		System.out.println("name : " + name);
 		
 		
-		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, "cpu", Order);
+//		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, "cpu", Order);
+		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module,  Order);
 		JSONArray fromObject = JSONArray.fromObject(newData);
 		return fromObject.toString();
 	}

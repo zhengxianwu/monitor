@@ -40,7 +40,7 @@ public class MetricbeatController {
 	 * 读取系统内存信息
 	 * 
 	 * @author wuzhe
-	 * @param hostname 节点名称
+	 * @param hostname 主机名称 节点名称
 	 * @return 返回Json
 	 */
 	@RequestMapping(value = "/metricbeat/getMemory", method = RequestMethod.GET)
@@ -68,7 +68,7 @@ public class MetricbeatController {
 	 * 读取系统Cpu信息
 	 * 
 	 * @author wuzhe
-	 * @param hostname hostname 节点名称
+	 * @param hostname 主机名称 hostname 节点名称
 	 * @return 返回系统cpu使用百分比 @
 	 */
 	@RequestMapping(value = "/metricbeat/getCPU", method = RequestMethod.GET)
@@ -97,7 +97,7 @@ public class MetricbeatController {
 	 * 读取磁盘信息
 	 * 
 	 * @author wuzhe
-	 * @param hostname
+	 * @param hostname 主机名称
 	 * @return 返回Json数组的磁盘信息 @
 	 */
 	@RequestMapping(value = "/metricbeat/getFilesystem", method = RequestMethod.GET)
@@ -122,7 +122,7 @@ public class MetricbeatController {
 	 * 读取系统进程使用信息（包含cpu和memory）
 	 * 
 	 * @author wuzhe
-	 * @param hostname
+	 * @param hostname 主机名称
 	 * @return 返回Json数组的系统进程使用信息（包含cpu和memory)
 	 */
 	@RequestMapping("/metricbeat/getProcess")
@@ -146,7 +146,7 @@ public class MetricbeatController {
 	 * 读取系统网络信息
 	 * 
 	 * @author wuzhe
-	 * @param hostname
+	 * @param hostname 主机名称
 	 * @return 返回Json数组的系统网络信息
 	 */
 	@RequestMapping("/metricbeat/getNetwork")
@@ -170,7 +170,7 @@ public class MetricbeatController {
 	 * 主机上运行的进程的摘要度量标准。
 	 * 
 	 * @author wuzhe
-	 * @param hostname
+	 * @param hostname 主机名称
 	 * @return 返回Json数组的主机上运行的进程的摘要度量标准。
 	 */
 	@RequestMapping("/metricbeat/getProcess_summary")
@@ -195,7 +195,7 @@ public class MetricbeatController {
 	 * Metricbeat模块状态
 	 * 
 	 * @author wuzhe
-	 * @param hostname
+	 * @param hostname 主机名称
 	 * @return Metricbeat模块状态 如（MySQL，Docker等）。
 	 */
 	@RequestMapping("/metricbeat/getStatus")
@@ -219,7 +219,7 @@ public class MetricbeatController {
 	 * system.fsstat 包含从所有已安装的文件系统聚合的文件系统指标。
 	 * 
 	 * @author wuzhe
-	 * @param hostname
+	 * @param hostname 主机名称
 	 * @return system.fsstat 包含从所有已安装的文件系统聚合的文件系统指标。
 	 */
 	@RequestMapping("/metricbeat/getFsstat")
@@ -245,7 +245,7 @@ public class MetricbeatController {
 	 * 读取系统Cpu信息
 	 * 
 	 * @author wuzhe
-	 * @param hostname  hostname 节点名称
+	 * @param hostname 主机名称  hostname 节点名称
 	 * @param indexTime 格式= 2019-03-06 ；生成 metricbeat-6.4.3-2019.03.06
 	 * @return 返回系统cpu使用百分比 @
 	 */
