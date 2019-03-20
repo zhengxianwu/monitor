@@ -58,7 +58,7 @@ public class ESQueryController {
 			@RequestParam(value = "indexName", required = true) String indexName,
 			@RequestParam(value = "beatName", required = true) String beatName,
 			@RequestParam(value = "module", required = true) String module,
-			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "name", required = true) String name,
 //			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
 		TransportClient client = null;
@@ -83,9 +83,7 @@ public class ESQueryController {
 		}
 		
 		
-		
-//		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, "cpu", Order);
-		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module,  Order);
+		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, name, Order);
 		JSONArray fromObject = JSONArray.fromObject(newData);
 		return fromObject.toString();
 	}

@@ -101,7 +101,7 @@
 				<!--解决SpringBoot打包成jar后运行提示没有主清单属性 -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>1.4.2.RELEASE</version>
+				<version>1.4.2.RELEASE</version><!--1.4.2解决SpringBoot打包成jar后找不到webapp -->
 				 <configuration>
                 <!-- 启动类 -->
 					<mainClass>com.monitor.monitor.MonitorApplication</mainClass>  

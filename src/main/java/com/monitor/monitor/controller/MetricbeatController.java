@@ -8,6 +8,7 @@ import java.util.List;
 import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ import com.monitor.monitor.service.util.MyDataUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+@CrossOrigin
 @RestController
 public class MetricbeatController {
 
