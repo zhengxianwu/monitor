@@ -9,6 +9,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ import com.monitor.monitor.service.util.MyDataUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+@CrossOrigin
 @RestController
 public class ESQueryController {
 
@@ -56,10 +58,9 @@ public class ESQueryController {
 	@RequestMapping(value = "/ESQuery/getNewData", method = RequestMethod.GET)
 	public String getCPU(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "indexName", required = true) String indexName,
-			@RequestParam(value = "beatName", required = true) String beatName,
+//			@RequestParam(value = "beatName", required = true) String beatName,
 			@RequestParam(value = "module", required = true) String module,
 			@RequestParam(value = "name", required = true) String name,
-//			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
 		TransportClient client = null;
 		try {
@@ -69,20 +70,25 @@ public class ESQueryController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(indexName == "fileset") {
-			indexName = MyDataUtil.getIndexFormat(fileset_version);
-		}else {
+		
+		String beatName = "";
+		if (indexName.equals("fileset")) {
+			 indexName = MyDataUtil.getIndexFormat(fileset_version);
+			 beatName = "fileset";
+		} else if(indexName.equals("metric")) {
 			indexName = MyDataUtil.getIndexFormat(metric_version);
+			 beatName = "metricset";
 		}
+	
 		
 		SortOrder Order;
-		if (sortOrder == "desc") {
+		if (sortOrder.equals("desc")) {
 			Order = SortOrder.DESC;
 		} else {
 			Order = SortOrder.ASC;
 		}
 		
-		
+		System.out.println("indexName: "+ indexName +"\r\nhostname  : " + hostname +"\r\n beatName :" + beatName + "\r\n module : " + module + "\r\n name : "+  name+ "\r\n order :"+ Order);
 		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, name, Order);
 		JSONArray fromObject = JSONArray.fromObject(newData);
 		return fromObject.toString();
