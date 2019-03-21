@@ -9,6 +9,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ import com.monitor.monitor.service.util.MyDataUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+@CrossOrigin
 @RestController
 public class ESQueryController {
 
@@ -42,13 +44,23 @@ public class ESQueryController {
 	@Autowired
 	private ESOperate esOperate;
 
+	
+	/**
+	 * 获取最新数据 
+	 * @param hostname    主机名称 (hostname)
+	 * @param indexName   索引名字 metric
+	 * @param beatName        插件名称 metricset
+	 * @param module 插件数据模块名称  如：metricset
+	 * @param name   插件数据名称 如：system
+	 * @param sortOrder   排序方法 SortOrder.DESC降序
+	 * @return 默认返回最新几条数据
+	 */
 	@RequestMapping(value = "/ESQuery/getNewData", method = RequestMethod.GET)
 	public String getCPU(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "indexName", required = true) String indexName,
-			@RequestParam(value = "beatName", required = true) String beatName,
+//			@RequestParam(value = "beatName", required = true) String beatName,
 			@RequestParam(value = "module", required = true) String module,
-			@RequestParam(value = "name", required = false, defaultValue = "") String name,
-//			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime,
+			@RequestParam(value = "name", required = true) String name,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
 		TransportClient client = null;
 		try {
@@ -58,24 +70,26 @@ public class ESQueryController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(indexName == "fileset") {
-			indexName = MyDataUtil.getIndexFormat(fileset_version);
-		}else {
+		
+		String beatName = "";
+		if (indexName.equals("fileset")) {
+			 indexName = MyDataUtil.getIndexFormat(fileset_version);
+			 beatName = "fileset";
+		} else if(indexName.equals("metric")) {
 			indexName = MyDataUtil.getIndexFormat(metric_version);
+			 beatName = "metricset";
 		}
-		System.out.println(indexName);
+	
 		
 		SortOrder Order;
-		if (sortOrder == "desc") {
+		if (sortOrder.equals("desc")) {
 			Order = SortOrder.DESC;
 		} else {
 			Order = SortOrder.ASC;
 		}
 		
-		System.out.println("name : " + name);
-		
-		
-		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, "cpu", Order);
+		System.out.println("indexName: "+ indexName +"\r\nhostname  : " + hostname +"\r\n beatName :" + beatName + "\r\n module : " + module + "\r\n name : "+  name+ "\r\n order :"+ Order);
+		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, name, Order);
 		JSONArray fromObject = JSONArray.fromObject(newData);
 		return fromObject.toString();
 	}

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.2.RELEASE</version>
+	 	<version>2.1.2.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.monitor</groupId>
@@ -19,7 +19,6 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-
 
 	<dependencies>
 		<dependency>
@@ -103,6 +102,12 @@
 				<!--解决SpringBoot打包成jar后运行提示没有主清单属性 -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>1.4.2.RELEASE</version><!--1.4.2解决SpringBoot打包成jar后找不到webapp -->
+				 <configuration>
+                <!-- 启动类 -->
+					<mainClass>com.monitor.monitor.MonitorApplication</mainClass>  
+				</configuration>
+				
 				<executions>
 					<execution>
 						<goals>
@@ -114,30 +119,30 @@
 		</plugins>
 
 
-	<!-- 打包成jar的时候会找不到jsp文件 只需要 在pom.xml文件添加 -->
-	<resources>
+		<!-- 打包名 -->
+		<finalName>monitor</finalName>
+		<!-- 打包成jar的时候会找不到jsp文件 只需要 在pom.xml文件添加 -->
+		<resources>
+			<resource>
 
-		<resource>
-			<directory>src/main/resources</directory>
-			<includes>
-				<include>**/**</include>
-			</includes>
-			<filtering>false</filtering>
-		</resource>
-
-		<resource>
-			<!--指定resources插件处理哪个目录下的资源文件 -->
-			<directory>src/main/webapp</directory>
-			<!--注意此次必须要放在此目录下才能被访问到 -->
-			<targetPath>/webapp</targetPath>
-			<includes>
-				<include>**/**</include>
-			</includes>
-		</resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/**</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
 			
+			<resource>
+               <directory>${basedir}/src/main/webapp</directory>
+                  <!-- 注意此次必须要放在此目录下才能被访问到 -->
+               <targetPath>META-INF/resources</targetPath> 
+               <includes>
+                   <include>**/**</include>
+               </includes>
+           </resource>
 			
-		
 		</resources>
+
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>

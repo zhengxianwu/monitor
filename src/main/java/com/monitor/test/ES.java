@@ -30,7 +30,8 @@ public class ES {
 	 */
 	public static void main(String[] args) throws UnknownHostException {
 		// TODO Auto-generated method stub
-		String ip = "192.168.20.1";
+		//http://39.108.227.22:9200
+		String ip = "39.108.227.22";
 		String cluster_name = "home";
 		int port = 9300;
 		String index_home = "metricbeat-6.4.3";
@@ -48,7 +49,7 @@ public class ES {
 
 		SearchResponse res = null;
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(new Date())); // 当天index
-		
+		System.out.println(indexName);
 		
 //		QueryBuilder qb = QueryBuilders.matchAllQuery();
 //
@@ -72,24 +73,24 @@ public class ES {
 //
 //		}
 		
-		SearchRequestBuilder setTypes = client.prepareSearch(indexName).setTypes("doc");
+//		SearchRequestBuilder setTypes = client.prepareSearch(indexName).setTypes("doc");
 		
 		
 		
-		
-		List<String> list = null;
-		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
-		SearchResponse actionGet = b
-				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("beat.hostname", "elastic-128"))
-						.filter(QueryBuilders.termQuery("metricset.name", MetricSystemType.cpu.toString())))
-				.addSort("@timestamp", SortOrder.DESC)
-				.setExplain(true)
-				.execute()
-				.actionGet();
-		for (SearchHit hit : actionGet.getHits().getHits()) {
-			System.out.println(hit.getSourceAsString());
-
-		}
+//		
+//		List<String> list = null;
+//		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+//		SearchResponse actionGet = b
+//				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("beat.hostname", "elastic-128"))
+//						.filter(QueryBuilders.termQuery("metricset.name", MetricSystemType.cpu.toString())))
+//				.addSort("@timestamp", SortOrder.DESC)
+//				.setExplain(true)
+//				.execute()
+//				.actionGet();
+//		for (SearchHit hit : actionGet.getHits().getHits()) {
+//			System.out.println(hit.getSourceAsString());
+//
+//		}
 
 	}
 

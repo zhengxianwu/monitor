@@ -26,7 +26,7 @@ import com.monitor.monitor.service.metricbeat.Metircbeat;
 public class MetricbeatControllerTest {
 	private String hostname_1 = "zhengxian";
 	private String hostname_2 = "elastic-128";
-	
+	//private String hostname_1 = "yunwei_server";
 	
 	private Metircbeat metricbeat;
 
