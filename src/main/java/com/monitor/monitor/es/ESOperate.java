@@ -33,7 +33,7 @@ public class ESOperate {
 	// ----------------------------------------集群----------------------------------------------
 
 	/***
-	 * ES数据查询
+	 * ES数据查询(module&name)
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名字
@@ -66,7 +66,7 @@ public class ESOperate {
 	}
 
 	/***
-	 * ES数据查询
+	 * ES数据查询(module)
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名字
@@ -96,9 +96,72 @@ public class ESOperate {
 		return list;
 	}
 
+	/***
+	 * ES数据查询(module&size)
+	 * 
+	 * @param client      客户端
+	 * @param indexName   索引名字
+	 * @param hostname    主机名称
+	 * @param beat        插件名称
+	 * @param type_module 插件数据模块名称
+	 * @param sortOrder   排序方法 SortOrder.DESC降序
+	 * @return 默认返回最新几条数据
+	 */
+	public List<String> RangeSearch(TransportClient client, String indexName, String hostname, String beat,
+			String type_module, int from, int size, SortOrder sortOrder) {
+		List<String> list = null;
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery()
+						.filter(QueryBuilders.termQuery(beat.toString() + ".module", type_module.toString()))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname)))
+				.setFrom(from).setSize(size).addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hitsCount = hits.getHits();
+		if (hitsCount.length > 0) {
+			list = new ArrayList<String>();
+			for (int i = 0; i < hitsCount.length; i++) {
+				list.add(hitsCount[i].getSourceAsString());
+			}
+		}
+		return list;
+	}
+
+	/***
+	 * ES数据查询(module&name&size)
+	 * 
+	 * @param client      客户端
+	 * @param indexName   索引名字
+	 * @param hostname    主机名称
+	 * @param beat        插件名称
+	 * @param type_module 插件数据模块名称
+	 * @param sortOrder   排序方法 SortOrder.DESC降序
+	 * @return 默认返回最新几条数据
+	 */
+	public List<String> RangeSearch(TransportClient client, String indexName, String hostname, String beat,
+			String type_module, String type_name, int from, int size, SortOrder sortOrder) {
+		List<String> list = null;
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery()
+						.filter(QueryBuilders.termQuery(beat.toString() + ".module", type_module.toString()))
+						.filter(QueryBuilders.termQuery(beat.toString() + ".name", type_name.toString()))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname)))
+				.setFrom(from).setSize(size).addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hitsCount = hits.getHits();
+		if (hitsCount.length > 0) {
+			list = new ArrayList<String>();
+			for (int i = 0; i < hitsCount.length; i++) {
+				list.add(hitsCount[i].getSourceAsString());
+			}
+		}
+		return list;
+	}
+
 	// --------------------------------------------------------------------------------------
 	/**
-	 * 获取最新一条数据（相同时间戳）
+	 * 获取最新一条数据（相同时间戳）(module&name)
 	 * 
 	 * @param client
 	 * @param indexName   索引名字
@@ -122,7 +185,7 @@ public class ESOperate {
 	}
 
 	/**
-	 * 获取最新一条数据（相同时间戳）
+	 * 获取最新一条数据（相同时间戳）(module)
 	 * 
 	 * @param client
 	 * @param indexName   索引名字
@@ -132,7 +195,7 @@ public class ESOperate {
 	 * @param sortOrder   排序方法 SortOrder.DESC降序
 	 * @return
 	 */
-	public List<String> getNewData(TransportClient client, String indexName,String hostname, String beat,
+	public List<String> getNewData(TransportClient client, String indexName, String hostname, String beat,
 			String type_module, SortOrder sortOrder) {
 		// 1、获取最新一条数据
 		List<String> rangeSearch = RangeSearch(client, indexName, hostname, beat, type_module, sortOrder);
@@ -146,7 +209,7 @@ public class ESOperate {
 
 	// --------------------------------------------------------------------------------------
 	/**
-	 * 获取相同时间的数据(集群)
+	 * 获取相同时间的数据(集群)(module&name)
 	 * 
 	 * @author wuzhe
 	 * @param client      客户端
@@ -187,7 +250,7 @@ public class ESOperate {
 	}
 
 	/**
-	 * 获取相同时间的数据(集群)
+	 * 获取相同时间的数据(集群)(module)
 	 * 
 	 * @author wuzhe
 	 * @param client      客户端
@@ -227,7 +290,7 @@ public class ESOperate {
 
 	// --------------------------------------------------------------------------------------
 	/**
-	 * 根据时间来获取数据（以时间范围来获取） 如：获取像要获取某一分钟数据
+	 * 根据时间来获取数据（以时间范围来获取）(module&name) 如：获取像要获取某一分钟数据
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名
@@ -239,10 +302,11 @@ public class ESOperate {
 	 * @param type_name   插件名称
 	 * @param from        分页从第几行开始
 	 * @param size        分页长度
-	 * @return
+	 * @return json数组
 	 */
 	public List<String> rangeTime(TransportClient client, String indexName, String hostname, String startTime,
-			String endTime, String beat, String type_module, String type_name, int from, int size, SortOrder sortOrder) {
+			String endTime, String beat, String type_module, String type_name, int from, int size,
+			SortOrder sortOrder) {
 		List<String> list = new ArrayList<String>();
 		// 尝试匹配id
 		startTime = MyTimeUtil.getLocalToUTC(startTime);
@@ -265,7 +329,7 @@ public class ESOperate {
 	}
 
 	/**
-	 * 根据时间来获取数据（以时间范围来获取） 如：获取像要获取某一分钟数据
+	 * 根据时间来获取数据（以时间范围来获取）(module) 如：获取像要获取某一分钟数据
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名
@@ -276,7 +340,8 @@ public class ESOperate {
 	 * @param type_module 插件模块名称
 	 * @param from        分页从第几行开始
 	 * @param size        分页长度
-	 * @return
+	 * @param sortOrder   排序
+	 * @return json数组
 	 */
 	public List<String> rangeTime(TransportClient client, String indexName, String hostname, String startTime,
 			String endTime, String beat, String type_module, int from, int size, SortOrder sortOrder) {
@@ -298,5 +363,76 @@ public class ESOperate {
 		}
 		return list;
 	}
+
+	/**
+	 * 根据时间来获取数据（以时间范围来获取）（不要size)(module&name) 如：获取像要获取某一分钟数据
+	 * 
+	 * @param client      客户端
+	 * @param indexName   索引名
+	 * @param hostname    主机名称
+	 * @param startTime   开始时间 开始时间（本地）格式："2019-3-7 10:00:27"
+	 * @param endTime     结束时间
+	 * @param beat        插件名称
+	 * @param type_module 插件模块名称
+	 * @param type_name   插件名称
+	 * @return json数组
+	 */
+	public List<String> rangeTime(TransportClient client, String indexName, String hostname, String startTime,
+			String endTime, String beat, String type_module, String type_name, SortOrder sortOrder) {
+		List<String> list = new ArrayList<String>();
+		// 尝试匹配id
+		startTime = MyTimeUtil.getLocalToUTC(startTime);
+		endTime = MyTimeUtil.getLocalToUTC(endTime);
+		System.out.println(startTime + "----" + endTime);
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery()
+						.filter(QueryBuilders.termQuery(beat.toString() + ".module", type_module.toString()))
+						.filter(QueryBuilders.termQuery(beat.toString() + ".name", type_name.toString()))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
+						.must(QueryBuilders.rangeQuery("@timestamp").lte(endTime).gte(startTime)))
+				.addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hits2 = hits.getHits();
+		for (SearchHit s : hits2) {
+			list.add(s.getSourceAsString());
+		}
+		return list;
+	}
+
+	/**
+	 * 根据时间来获取数据（以时间范围来获取）（不要size)(module) 如：获取像要获取某一分钟数据
+	 * 
+	 * @param client      客户端
+	 * @param indexName   索引名
+	 * @param hostname    主机名称
+	 * @param startTime   开始时间 开始时间（本地）格式："2019-3-7 10:00:27"
+	 * @param endTime     结束时间
+	 * @param beat        插件名称
+	 * @param type_module 插件模块名称
+	 * @return json数组
+	 */
+	public List<String> rangeTime(TransportClient client, String indexName, String hostname, String startTime,
+			String endTime, String beat, String type_module, SortOrder sortOrder) {
+		List<String> list = new ArrayList<String>();
+		// 尝试匹配id
+		startTime = MyTimeUtil.getLocalToUTC(startTime);
+		endTime = MyTimeUtil.getLocalToUTC(endTime);
+		System.out.println(startTime + "----" + endTime);
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery()
+						.filter(QueryBuilders.termQuery(beat.toString() + ".module", type_module.toString()))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
+						.must(QueryBuilders.rangeQuery("@timestamp").lte(endTime).gte(startTime)))
+				.addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hits2 = hits.getHits();
+		for (SearchHit s : hits2) {
+			list.add(s.getSourceAsString());
+		}
+		return list;
+	}
+	// --------------------------------------------------------------------------------------
 
 }

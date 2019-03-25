@@ -24,15 +24,11 @@ import com.monitor.monitor.service.metricbeat.Metircbeat;
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc // 注入MockMvc
 public class MetricbeatControllerTest {
-	private String hostname_1 = "zhengxian";
+	//private String hostname_1 = "zhengxian";
 	private String hostname_2 = "elastic-128";
-	//private String hostname_1 = "yunwei_server";
+	private String hostname_1 = "yunwei_server";
 	
-	private Metircbeat metricbeat;
 
-	@Autowired
-//	@Qualifier("client")
-	private ESClient esClient;
 
 	private MockMvc mockMvc;
 

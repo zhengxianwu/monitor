@@ -13,6 +13,8 @@
 	<artifactId>monitor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>monitor</name>
+	<!-- war包配置  -->
+	<packaging>war</packaging>
 	<description>project for Spring Boot</description>
 
 	<properties>
@@ -23,6 +25,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			
+			<!-- tomcat运行配置 -->
+			<!-- 移除嵌入式tomcat插件 -->
+		    <exclusions>
+		        <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-starter-tomcat</artifactId>
+		        </exclusion>
+		    </exclusions>
+		    
 		</dependency>
 
 		<dependency>
