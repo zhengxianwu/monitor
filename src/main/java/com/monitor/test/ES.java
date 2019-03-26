@@ -30,13 +30,14 @@ public class ES {
 	 */
 	public static void main(String[] args) throws UnknownHostException {
 		// TODO Auto-generated method stub
-		//http://39.108.227.22:9200
+		// http://39.108.227.22:9200
 		String ip = "39.108.227.22";
 		String cluster_name = "home";
 		int port = 9300;
-		String index_home = "metricbeat-6.4.3";
+		String index_home = "filebeat-6.4.3";
+		String hostname = "yunwei_server";
 
-		//嗅探功能("client.transport.sniff", true)
+		// 嗅探功能("client.transport.sniff", true)
 		Settings settings = Settings.builder().put("cluster.name", cluster_name).put("client.transport.sniff", true)
 				.build();
 		TransportClient client = new PreBuiltTransportClient(settings)
@@ -50,7 +51,22 @@ public class ES {
 		SearchResponse res = null;
 		String indexName = String.format(index_home + "-%s", new SimpleDateFormat("yyyy.MM.dd").format(new Date())); // 当天index
 		System.out.println(indexName);
-		
+
+		List<String> list = null;
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(
+						QueryBuilders.boolQuery()
+						.filter(QueryBuilders.regexpQuery("source", ".*zhengxian.log"))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
+						.filter(QueryBuilders.termQuery("prospector.type", "log")))
+				.addSort("@timestamp", SortOrder.DESC).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hitsCount = hits.getHits();
+		for (SearchHit hit : actionGet.getHits().getHits()) {
+			System.out.println(hit.getSourceAsString());
+		}
+
 //		QueryBuilder qb = QueryBuilders.matchAllQuery();
 //
 //		res = client.prepareSearch(indexName)
@@ -72,11 +88,9 @@ public class ES {
 //			System.out.println(hit.getSourceAsString());
 //
 //		}
-		
+
 //		SearchRequestBuilder setTypes = client.prepareSearch(indexName).setTypes("doc");
-		
-		
-		
+
 //		
 //		List<String> list = null;
 //		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
@@ -94,36 +108,4 @@ public class ES {
 
 	}
 
-	
-	
-	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
