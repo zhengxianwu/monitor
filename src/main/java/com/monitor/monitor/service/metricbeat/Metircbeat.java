@@ -207,9 +207,6 @@ public class Metircbeat {
 	
 	
 	
-	
-	
-	
 	/**
 	 * 根据时间来获取数据（以时间范围来获取） 如：获取像要获取某一分钟数据
 	 * @param client

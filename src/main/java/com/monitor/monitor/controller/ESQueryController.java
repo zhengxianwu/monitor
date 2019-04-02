@@ -37,59 +37,202 @@ public class ESQueryController {
 
 	@Value("${es.fileset_version}")
 	private String fileset_version;
-	
+
 	@Autowired
 	private ESClient esClient;
 
 	@Autowired
 	private ESOperate esOperate;
 
-	
 	/**
-	 * 获取最新数据 
-	 * @param hostname    主机名称 (hostname)
-	 * @param indexName   索引名字 metric
-	 * @param beatName        插件名称 metricset
-	 * @param module 插件数据模块名称  如：metricset
-	 * @param name   插件数据名称 如：system
-	 * @param sortOrder   排序方法 SortOrder.DESC降序
+	 * 获取最新数据
+	 * 
+	 * @param hostname  主机名称 (hostname)
+	 * @param indexName 索引名字 metric
+	 * @param module    插件数据模块名称 如：metricset
+	 * @param name      (可选)插件数据名称 如：system
+	 * @param from      分页从第几行开始(可选)
+	 * @param size      分页长度(可选)
+	 * @param sortOrder 排序(可选)
+	 * @param sortOrder 排序方法 SortOrder.DESC降序(可选)
 	 * @return 默认返回最新几条数据
 	 */
 	@RequestMapping(value = "/ESQuery/getNewData", method = RequestMethod.GET)
-	public String getCPU(@RequestParam(value = "hostname", required = true) String hostname,
+	public String getNewData(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "indexName", required = true) String indexName,
-//			@RequestParam(value = "beatName", required = true) String beatName,
 			@RequestParam(value = "module", required = true) String module,
-			@RequestParam(value = "name", required = true) String name,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "from", required = false, defaultValue = "") String from,
+			@RequestParam(value = "size", required = false, defaultValue = "") String size,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
 		TransportClient client = null;
 		try {
 			client = esClient.getClient();
-
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		String beatName = "";
 		if (indexName.equals("fileset")) {
-			 indexName = MyDataUtil.getIndexFormat(fileset_version);
-			 beatName = "fileset";
-		} else if(indexName.equals("metric")) {
+			indexName = MyDataUtil.getIndexFormat(fileset_version);
+			beatName = "fileset";
+		} else if (indexName.equals("metric")) {
 			indexName = MyDataUtil.getIndexFormat(metric_version);
-			 beatName = "metricset";
+			beatName = "metricset";
 		}
-	
-		
+
 		SortOrder Order;
 		if (sortOrder.equals("desc")) {
 			Order = SortOrder.DESC;
 		} else {
 			Order = SortOrder.ASC;
 		}
-		
-		System.out.println("indexName: "+ indexName +"\r\nhostname  : " + hostname +"\r\n beatName :" + beatName + "\r\n module : " + module + "\r\n name : "+  name+ "\r\n order :"+ Order);
-		List<String> newData = esOperate.getNewData(client, indexName,hostname, beatName, module, name, Order);
+
+		List<String> newData = null;
+
+		System.out.println("indexName: " + indexName + "\r\nhostname  : " + hostname + "\r\n beatName :" + beatName
+				+ "\r\n module : " + module + "\r\n name : " + name + "\r\n order :" + Order);
+
+		if (name.equals("")) {
+			newData = esOperate.getNewData(client, indexName, hostname, beatName, module, Order);
+		} else {
+			newData = esOperate.getNewData(client, indexName, hostname, beatName, module, name, Order);
+		}
+		JSONArray fromObject = JSONArray.fromObject(newData);
+		if (newData == null)
+			return null;
+		return fromObject.toString();
+	}
+
+	/**
+	 * 根据时间来获取数据（以时间范围来获取）(含size,from分页) 如：获取像要获取某一分钟数据
+	 * 
+	 * @param indexName 索引名
+	 * @param hostname  主机名称
+	 * @param startTime 开始时间 开始时间（本地）格式："2019-3-7 10:00:27"
+	 * @param endTime   结束时间
+	 * @param module    插件模块名称
+	 * @param name      插件名称(可选)
+	 * @param from      分页从第几行开始(可选)
+	 * @param size      分页长度(可选)
+	 * @param sortOrder 排序(可选)
+	 * @return json数组
+	 */
+	@RequestMapping(value = "/ESQuery/getRangeTime", method = RequestMethod.GET)
+	public String getRangeTime(@RequestParam(value = "hostname", required = true) String hostname,
+			@RequestParam(value = "indexName", required = true) String indexName,
+			@RequestParam(value = "startTime", required = true) String startTime,
+			@RequestParam(value = "endTime", required = true) String endTime,
+			@RequestParam(value = "module", required = true) String module,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "from", required = false, defaultValue = "") String from,
+			@RequestParam(value = "size", required = false, defaultValue = "") String size,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
+		TransportClient client = null;
+		try {
+			client = esClient.getClient();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+
+		String beatName = "";
+		if (indexName.equals("fileset")) {
+			indexName = MyDataUtil.getIndexFormat(fileset_version);
+			beatName = "fileset";
+		} else if (indexName.equals("metric")) {
+			indexName = MyDataUtil.getIndexFormat(metric_version);
+			beatName = "metricset";
+		}
+
+		SortOrder Order;
+		if (sortOrder.equals("desc")) {
+			Order = SortOrder.DESC;
+		} else {
+			Order = SortOrder.ASC;
+		}
+
+		List<String> newData = null;
+		if ((from.equals("") || size.equals("")) && name.equals("")) {
+			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module, Order);
+		} else if ((from.equals("") || size.equals("")) && !name.equals("")) {
+			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module, name,
+					Order);
+		} else if ((!from.equals("") && !size.equals("")) && name.equals("")) {
+			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module,
+					Integer.parseInt(from), Integer.parseInt(size), Order);
+		} else if ((!from.equals("") && !size.equals("")) && !name.equals("")) {
+			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module, name,
+					Integer.parseInt(from), Integer.parseInt(size), Order);
+		}
+
+		if (newData == null)
+			return null;
+		System.out.println("indexName: " + indexName + "\r\nhostname  : " + hostname + "\r\n beatName :" + beatName
+				+ "\r\n module : " + module + "\r\n name : " + name + "\r\n order :" + Order);
+		JSONArray fromObject = JSONArray.fromObject(newData);
+		return fromObject.toString();
+	}
+
+	/**
+	 * 查询接口(含size,from分页) 如：获取像要获取某一分钟数据
+	 * 
+	 * @param indexName 索引名
+	 * @param hostname  主机名称
+	 * @param module    插件模块名称
+	 * @param name      插件名称(可选)
+	 * @param from      分页从第几行开始(可选)
+	 * @param size      分页长度(可选)
+	 * @param sortOrder 排序(可选)
+	 * @return json数组
+	 */
+	@RequestMapping(value = "/ESQuery/getRangeSearch", method = RequestMethod.GET)
+	public String getRangeSearch(@RequestParam(value = "hostname", required = true) String hostname,
+			@RequestParam(value = "indexName", required = true) String indexName,
+			@RequestParam(value = "module", required = true) String module,
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "from", required = false, defaultValue = "") String from,
+			@RequestParam(value = "size", required = false, defaultValue = "") String size,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
+		TransportClient client = null;
+		try {
+			client = esClient.getClient();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+
+		String beatName = "";
+		if (indexName.equals("fileset")) {
+			indexName = MyDataUtil.getIndexFormat(fileset_version);
+			beatName = "fileset";
+		} else if (indexName.equals("metric")) {
+			indexName = MyDataUtil.getIndexFormat(metric_version);
+			beatName = "metricset";
+		}
+
+		SortOrder Order;
+		if (sortOrder.equals("desc")) {
+			Order = SortOrder.DESC;
+		} else {
+			Order = SortOrder.ASC;
+		}
+
+		List<String> newData = null;
+		if ((from.equals("") || size.equals("")) && name.equals("")) {
+			newData = esOperate.RangeSearch(client, indexName, hostname, beatName, module, Order);
+		} else if ((from.equals("") || size.equals("")) && !name.equals("")) {
+			newData = esOperate.RangeSearch(client, indexName, hostname, beatName, module, name, Order);
+		} else if ((!from.equals("") && !size.equals("")) && name.equals("")) {
+			newData = esOperate.RangeSearch(client, indexName, hostname, beatName, module, Integer.parseInt(from),
+					Integer.parseInt(size), Order);
+		} else if ((!from.equals("") && !size.equals("")) && !name.equals("")) {
+			newData = esOperate.RangeSearch(client, indexName, hostname, beatName, module, name, Integer.parseInt(from),
+					Integer.parseInt(size), Order);
+		}
+
+		if (newData == null)
+			return null;
+		System.out.println("indexName: " + indexName + "\r\nhostname  : " + hostname + "\r\n beatName :" + beatName
+				+ "\r\n module : " + module + "\r\n name : " + name + "\r\n order :" + Order);
 		JSONArray fromObject = JSONArray.fromObject(newData);
 		return fromObject.toString();
 	}

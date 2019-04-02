@@ -3,6 +3,8 @@ package com.monitor.monitor.controller;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +22,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.monitor.monitor.es.ESClient;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc // 注入MockMvc
@@ -28,11 +34,9 @@ public class MetricbeatControllerTest {
 	private String hostname_2 = "elastic-128";
 	//private String hostname_1 = "yunwei_server";
 	
-	private Metircbeat metricbeat;
+	
+	private static final Logger log = LoggerFactory.getLogger(MetricbeatControllerTest.class);
 
-	@Autowired
-//	@Qualifier("client")
-	private ESClient esClient;
 
 	private MockMvc mockMvc;
 
@@ -50,6 +54,8 @@ public class MetricbeatControllerTest {
 				.perform(MockMvcRequestBuilders.get("/metricbeat/getCPU").param("hostname", hostname_1)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andDo(MockMvcResultHandlers.print()).andReturn();
+		log.info("infoCpuTest :" + andReturn.getResponse().getContentAsString());
+		log.debug("debugCpuTest :" + andReturn.getResponse().getContentAsString());
 		System.out.println("CpuTest :" + andReturn.getResponse().getContentAsString());
 	}
 
