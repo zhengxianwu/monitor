@@ -42,10 +42,16 @@ public class FilebeatController {
 	 * 读取日志文件
 	 * 
 	 * @author wuzhe
-	 * @param hostname  主机名称 节点名称
-	 * @param filename  文件名，如zhengxian.log 或 路径全称 ：/var/log/zhengxian.log
-	 * 
-	 * @param sortOrder 数据排序
+	 * @param hostname   主机名称 节点名称
+	 * @param filename   文件名，如zhengxian.log 或 路径全称 ：/var/log/zhengxian.log
+	 * @param startTime  开始时间 开始时间（本地）格式："2019-3-7 10:00:27"
+	 * @param endTime    结束时间
+	 * @param from       分页从第几行开始(可选)
+	 * @param size       分页长度(可选)
+	 * @param regContext 查询记录含有内容（可选)
+	 * @param sortOrder  数据排序
+	 * @param indexTime  索引日期如： 2019-3-3（默认查询单天数据，如果要查询指定日期，则填写)
+	 * @category 配对使用（startTime和endTime） ，（ from和size)必须两个一起
 	 * @return json数组
 	 */
 	@RequestMapping(value = "/Filebeat/getFileLog", method = RequestMethod.GET)
@@ -56,7 +62,8 @@ public class FilebeatController {
 			@RequestParam(value = "from", required = false, defaultValue = "") String from,
 			@RequestParam(value = "size", required = false, defaultValue = "") String size,
 			@RequestParam(value = "regContext", required = false, defaultValue = "") String regContext,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
+			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime) {
 //		system.memory.actual.used.pct
 //		类型：scaled_float
 //		格式：百分比
@@ -76,20 +83,55 @@ public class FilebeatController {
 			Order = SortOrder.ASC;
 		}
 
-		String indexName = MyDataUtil.getIndexFormat(fileset_version);
+		String indexName;
+		if (indexTime.equals("")) {
+			indexName = MyDataUtil.getIndexFormat(fileset_version);
+		} else {
+			indexName = MyDataUtil.getIndexFormat(fileset_version);
+		}
 
 		List<String> newData = null;
-		if (startTime.equals("") && endTime.equals("") && from.equals("") && size.equals("")) {
-			newData = filebeat.getFileLog(client, indexName, hostname, filename, Order);
-		} else if ((!startTime.equals("") && !endTime.equals("")) && (from.equals("") && size.equals(""))) {
-			newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime, Order);
-		} else if ((startTime.equals("") && endTime.equals("")) && (!from.equals("") && !size.equals(""))) {
-			newData = filebeat.getFileLog(client, indexName, hostname, filename, Integer.parseInt(from),
-					Integer.parseInt(size), Order);
-		} else if (!startTime.equals("") && !endTime.equals("") && !from.equals("") && !size.equals("")) {
-			newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime,
-					Integer.parseInt(from), Integer.parseInt(size), Order);
+
+		
+		if(regContext.equals("")) {
+			if (startTime.equals("") && size.equals("")) { //不做过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, Order);
+			} else if (!startTime.equals("") && size.equals("")) { //时间过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime, Order);
+			} else if (startTime.equals("") && !size.equals("")) { //分页过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, Integer.parseInt(from),
+						Integer.parseInt(size), Order);
+			} else if (!startTime.equals("") && !size.equals("")) { //分页时间过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime,
+						Integer.parseInt(from), Integer.parseInt(size), Order);
+			}
+		}else {
+			if (startTime.equals("") && size.equals("")) { //不做过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, regContext,Order);
+			} else if (!startTime.equals("") && size.equals("")) { //时间过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime,regContext, Order);
+			} else if (startTime.equals("") && !size.equals("")) { //分页过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, Integer.parseInt(from),
+						Integer.parseInt(size),regContext, Order);
+			} else if (!startTime.equals("") && !size.equals("")) { //分页时间过滤
+				newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime,
+						Integer.parseInt(from), Integer.parseInt(size),regContext, Order);
+			}
 		}
+		
+		
+
+//		if ((startTime.equals("") && endTime.equals("")) && (from.equals("") && size.equals(""))) {
+//			newData = filebeat.getFileLog(client, indexName, hostname, filename, Order);
+//		} else if ((!startTime.equals("") && !endTime.equals("")) && (from.equals("") && size.equals(""))) {
+//			newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime, Order);
+//		} else if ((startTime.equals("") && endTime.equals("")) && (!from.equals("") && !size.equals(""))) {
+//			newData = filebeat.getFileLog(client, indexName, hostname, filename, Integer.parseInt(from),
+//					Integer.parseInt(size), Order);
+//		} else if (!startTime.equals("") && !endTime.equals("") && !from.equals("") && !size.equals("")) {
+//			newData = filebeat.getFileLog(client, indexName, hostname, filename, startTime, endTime,
+//					Integer.parseInt(from), Integer.parseInt(size), Order);
+//		}
 
 		if (newData == null)
 			return null;

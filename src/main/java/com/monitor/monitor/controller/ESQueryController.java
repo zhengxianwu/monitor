@@ -55,6 +55,8 @@ public class ESQueryController {
 	 * @param size      分页长度(可选)
 	 * @param sortOrder 排序(可选)
 	 * @param sortOrder 排序方法 SortOrder.DESC降序(可选)
+	 * @param indexTime 索引日期如： 2019-3-3（默认查询单天数据，如果要查询指定日期，则填写)
+	 * @category 配对使用（startTime和endTime） ，（ from和size)必须两个一起
 	 * @return 默认返回最新几条数据
 	 */
 	@RequestMapping(value = "/ESQuery/getNewData", method = RequestMethod.GET)
@@ -64,7 +66,8 @@ public class ESQueryController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "from", required = false, defaultValue = "") String from,
 			@RequestParam(value = "size", required = false, defaultValue = "") String size,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
+			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime) {
 		TransportClient client = null;
 		try {
 			client = esClient.getClient();
@@ -74,10 +77,18 @@ public class ESQueryController {
 
 		String beatName = "";
 		if (indexName.equals("fileset")) {
-			indexName = MyDataUtil.getIndexFormat(fileset_version);
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexFormat(fileset_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(fileset_version);
+			}
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
-			indexName = MyDataUtil.getIndexFormat(metric_version);
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexFormat(metric_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(metric_version);
+			}
 			beatName = "metricset";
 		}
 
@@ -116,6 +127,8 @@ public class ESQueryController {
 	 * @param from      分页从第几行开始(可选)
 	 * @param size      分页长度(可选)
 	 * @param sortOrder 排序(可选)
+	 * @param indexTime 索引日期如： 2019-3-3（默认查询单天数据，如果要查询指定日期，则填写)
+	 * @category 配对使用（startTime和endTime） ，（ from和size)必须两个一起
 	 * @return json数组
 	 */
 	@RequestMapping(value = "/ESQuery/getRangeTime", method = RequestMethod.GET)
@@ -127,7 +140,8 @@ public class ESQueryController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "from", required = false, defaultValue = "") String from,
 			@RequestParam(value = "size", required = false, defaultValue = "") String size,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
+			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime) {
 		TransportClient client = null;
 		try {
 			client = esClient.getClient();
@@ -137,10 +151,18 @@ public class ESQueryController {
 
 		String beatName = "";
 		if (indexName.equals("fileset")) {
-			indexName = MyDataUtil.getIndexFormat(fileset_version);
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexFormat(fileset_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(fileset_version);
+			}
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
-			indexName = MyDataUtil.getIndexFormat(metric_version);
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexFormat(metric_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(metric_version);
+			}
 			beatName = "metricset";
 		}
 
@@ -183,6 +205,8 @@ public class ESQueryController {
 	 * @param from      分页从第几行开始(可选)
 	 * @param size      分页长度(可选)
 	 * @param sortOrder 排序(可选)
+	 * @param indexTime  索引日期如： 2019-3-3（默认查询单天数据，如果要查询指定日期，则填写)
+	 * @category 配对使用（startTime和endTime） ，（ from和size)必须两个一起
 	 * @return json数组
 	 */
 	@RequestMapping(value = "/ESQuery/getRangeSearch", method = RequestMethod.GET)
@@ -192,7 +216,8 @@ public class ESQueryController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "from", required = false, defaultValue = "") String from,
 			@RequestParam(value = "size", required = false, defaultValue = "") String size,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
+			@RequestParam(value = "indexTime", required = false, defaultValue = "")String indexTime) {
 		TransportClient client = null;
 		try {
 			client = esClient.getClient();
@@ -202,10 +227,18 @@ public class ESQueryController {
 
 		String beatName = "";
 		if (indexName.equals("fileset")) {
-			indexName = MyDataUtil.getIndexFormat(fileset_version);
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexFormat(fileset_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(fileset_version);
+			}
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
-			indexName = MyDataUtil.getIndexFormat(metric_version);
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexFormat(metric_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(metric_version);
+			}
 			beatName = "metricset";
 		}
 
