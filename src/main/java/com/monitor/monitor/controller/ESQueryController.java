@@ -80,17 +80,22 @@ public class ESQueryController {
 			if (indexTime.equals("")) {
 				indexName = MyDataUtil.getIndexFormat(fileset_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(fileset_version);
+				indexName = MyDataUtil.getIndexFormat(fileset_version, indexTime);
 			}
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
 			if (indexTime.equals("")) {
 				indexName = MyDataUtil.getIndexFormat(metric_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(metric_version);
+				indexName = MyDataUtil.getIndexFormat(metric_version, indexTime);
 			}
 			beatName = "metricset";
 		}
+		
+		if(from.equals("")) {
+			from= "0";
+		}
+
 
 		SortOrder Order;
 		if (sortOrder.equals("desc")) {
@@ -154,14 +159,14 @@ public class ESQueryController {
 			if (indexTime.equals("")) {
 				indexName = MyDataUtil.getIndexFormat(fileset_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(fileset_version);
+				indexName = MyDataUtil.getIndexFormat(fileset_version, indexTime);
 			}
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
 			if (indexTime.equals("")) {
 				indexName = MyDataUtil.getIndexFormat(metric_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(metric_version);
+				indexName = MyDataUtil.getIndexFormat(metric_version, indexTime);
 			}
 			beatName = "metricset";
 		}
@@ -230,14 +235,14 @@ public class ESQueryController {
 			if (indexTime.equals("")) {
 				indexName = MyDataUtil.getIndexFormat(fileset_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(fileset_version);
+				indexName = MyDataUtil.getIndexFormat(fileset_version, indexTime);
 			}
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
 			if (indexTime.equals("")) {
 				indexName = MyDataUtil.getIndexFormat(metric_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(metric_version);
+				indexName = MyDataUtil.getIndexFormat(metric_version, indexTime);
 			}
 			beatName = "metricset";
 		}

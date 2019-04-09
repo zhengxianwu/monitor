@@ -124,7 +124,8 @@ public class Filebeat {
 	 * @param client    客户端
 	 * @param indexName 索引名字
 	 * @param hostname  主机名称
-	 * @param filename  日志文件名 * @param startTime 开始时间 开始时间（本地）格式："2019-3-7 10:00:27"
+	 * @param filename  日志文件名
+	 * @param startTime 开始时间 开始时间（本地）格式："2019-3-7 10:00:27"
 	 * @param endTime   结束时间
 	 * @param from      分页从第几行开始(可选)
 	 * @param size      分页长度(可选)
