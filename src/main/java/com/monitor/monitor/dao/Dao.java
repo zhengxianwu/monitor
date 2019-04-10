@@ -13,9 +13,9 @@ public class Dao {
 
 	public static void main(String[] args) {
 		try {
-			content select = select(1);
+//			content select = select(1);
 			update("diyici",1,1);
-			System.out.println(select);
+//			System.out.println(select);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -24,7 +24,6 @@ public class Dao {
 	}
 
 	private static Connection connectionDataBase() {
-
 		// 声明Connection对象
 		Connection con = null;
 		try {
@@ -114,49 +113,3 @@ public class Dao {
 	}
 }
 
-class content {
-	private int id;
-	private String content;
-	private int version;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	public content(int id, String content, int version) {
-		super();
-		this.id = id;
-		this.content = content;
-		this.version = version;
-	}
-
-	public content() {
-		super();
-	}
-
-	@Override
-	public String toString() {
-		return "content [id=" + id + ", content=" + content + ", version=" + version + "]";
-	}
-
-}
