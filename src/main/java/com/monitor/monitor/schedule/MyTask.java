@@ -13,12 +13,12 @@ public class MyTask {
 //	}
 //	
 
-	@Autowired
-	private SpringDynamicCronTask scheduledUtil;
+//	@Autowired
+//	private SpringDynamicCronTask scheduledUtil;
+//	
 	
-	
-	@Scheduled(cron = "0/60 * * * * *")
-	public void work2() {
-		scheduledUtil.setCron("0/1 * * * * *");
-	}
+//	@Scheduled(cron = "0/60 * * * * *")
+//	public void work2() {
+//		scheduledUtil.setCron("0/1 * * * * *");
+//	}
 }
