@@ -26,22 +26,24 @@ public class StartTaskManagementListener implements ApplicationListener<ContextR
 		// TODO Auto-generated method stub
 		if(event.getApplicationContext().getParent() == null) {
 			taskManage.init();
-			System.out.println(taskManage);
-			List<SpringDynamicCronTask> taskList = taskManage.getTaskList();
-			new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						Thread.sleep(15000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					taskList.get(0).stopTask();
-				}
-			}).start();
+			
+//测试
+//			System.out.println(taskManage);
+//			List<SpringDynamicCronTask> taskList = taskManage.getTaskList();
+//			new Thread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					// TODO Auto-generated method stub
+//					try {
+//						Thread.sleep(15000);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					taskManage.removeTask(taskList.get(0).getSchedule());
+//				}
+//			}).start();
 		}
 	}
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.es.type.TaskStateType;
+import com.monitor.monitor.service.util.TaskUtil;
 
 //@Lazy(false)
 //@Component
@@ -23,7 +24,7 @@ import com.monitor.monitor.es.type.TaskStateType;
 
 public class SpringDynamicCronTask {
 //implements SchedulingConfigurer
-	private String cron = "0/1 * * * * *";
+	private String cron;
 	private Schedule schedule;
 	ScheduledFuture<?> scheduledFuture = null;
 	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
@@ -31,8 +32,10 @@ public class SpringDynamicCronTask {
 	public SpringDynamicCronTask(Schedule schedule,ThreadPoolTaskScheduler threadPoolTaskScheduler) {
 		super();
 		this.schedule = schedule;
+		this.cron = TaskUtil.formatCron(schedule.getThreshold(),schedule.getTaskType());
 		this.threadPoolTaskScheduler = threadPoolTaskScheduler;
-		startTask();
+		
+		startTask();//启动任务
 	}
 
 	
@@ -44,7 +47,7 @@ public class SpringDynamicCronTask {
 				// 任务逻辑
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				// 业务逻辑
-				System.out.println(schedule.getTaskId() + " : dynamicCronTask is running..." + ",时间为:"
+				System.out.println(schedule.getHostname() + " : " +schedule.getTaskId() + " is running..." + ",时间为:"
 						+ simpleDateFormat.format(new Date()));
 			}
 		}, new Trigger() {
@@ -64,5 +67,13 @@ public class SpringDynamicCronTask {
 			scheduledFuture.cancel(true);
 		}
 	}
+
+
+
+	public Schedule getSchedule() {
+		return this.schedule;
+	}
+
+	
 
 }

@@ -14,12 +14,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @AutoConfigureMockMvc // 注入MockMvc
 public class TaskManagementTest {
 
-	@Autowired
-	private DynamicTask mt;
 	
 	@Test
 	public void test() {
-		mt.test();
 	}
 
 }

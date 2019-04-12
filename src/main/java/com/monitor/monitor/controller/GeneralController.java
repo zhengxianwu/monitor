@@ -27,6 +27,7 @@ import com.monitor.monitor.es.type.FilesetType;
 import com.monitor.monitor.es.type.MetricSystemType;
 import com.monitor.monitor.es.type.ScheduleTaskType;
 import com.monitor.monitor.es.type.TaskStateType;
+import com.monitor.monitor.schedule.TaskManagement;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 import com.monitor.monitor.service.util.MyDataUtil;
 import com.monitor.monitor.service.util.MyMD5;
@@ -44,6 +45,10 @@ public class GeneralController {
 
 	@Autowired
 	private ScheduleTaskDb std;
+
+	@Autowired
+	private TaskManagement taskManage;
+
 	// --------------------------------------主机映射--------------------------------------
 
 	/**
@@ -170,6 +175,15 @@ public class GeneralController {
 		}
 
 		boolean addMap = std.add(hostname, type, threshold, taskId, stt.toString(), taskValue, tst.toString());
+
+		
+		//启动任务
+		if(tst == TaskStateType.Run) 
+		{
+			taskManage.addTask(std.getTaskId(taskId));
+		}
+		
+		
 		return String.valueOf(addMap);
 	}
 
@@ -195,13 +209,41 @@ public class GeneralController {
 			@RequestParam(value = "taskId", required = true) String taskId,
 			@RequestParam(value = "taskValue", required = true) String taskValue,
 			@RequestParam(value = "taskState", required = true) String taskState) {
+		boolean updateMap = true;
+		Schedule oldSchedule = std.getTaskId(taskId);
 
-		boolean updateMap = std.updateMap(hostname, type, threshold, taskId, taskType, taskValue, taskState);
+		////新的与旧的都等于停止
+		if(oldSchedule.taskState.equals(TaskStateType.Stop.toString()) && taskState.equals(TaskStateType.Stop.toString())){
+			updateMap = std.updateMap(hostname, type, threshold, taskType, taskValue, taskState, taskId);
+		}else {
+		//任务判断
+			//更新
+			updateMap = std.updateMap(hostname, type, threshold, taskType, taskValue, taskState, taskId);
+			if(updateMap) { //更新成功执行
+				// 启动 -> 停止
+				if (oldSchedule.taskState.equals(TaskStateType.Run.toString()) && taskState.equals(TaskStateType.Stop.toString())) {
+					taskManage.removeTask(taskId);
+				}
+				// 停止 -> 启动
+				if (oldSchedule.taskState.equals(TaskStateType.Stop.toString()) && taskState.equals(TaskStateType.Run.toString())) {
+					taskManage.removeTask(taskId);
+					taskManage.addTask(std.getTaskId(taskId));
+				}
+				
+				// 停止 -> 启动
+				if (oldSchedule.taskState.equals(TaskStateType.Run.toString()) && taskState.equals(TaskStateType.Run.toString())) {
+					taskManage.removeTask(taskId);
+					taskManage.addTask(std.getTaskId(taskId));
+				}
+				
+			}
+		}
+
 		return String.valueOf(updateMap);
 	}
 
 	/**
-	 * 更新定时任务
+	 * 删除定时任务
 	 * 
 	 * @author wuzhe
 	 * @param taskId 任务Id
@@ -210,6 +252,7 @@ public class GeneralController {
 	@RequestMapping(value = "/task/delete", method = RequestMethod.POST)
 	public String task(@RequestParam(value = "taskId", required = true) String taskId) {
 		boolean deleteMap = std.deleteMap(taskId);
+		taskManage.removeTask(taskId);
 		return String.valueOf(deleteMap);
 	}
 }

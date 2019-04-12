@@ -83,13 +83,13 @@ public class ScheduleTaskDb {
 	 * @param taskState (Run("运行"), Stop("暂停");)TaskStateType
 	 * @return
 	 */
-	public boolean updateMap(String hostname, String type, String threshold, String taskId, String taskType,
-			String taskValue, String taskState) {
+	public boolean updateMap(String hostname, String type, String threshold, String taskType,
+			String taskValue, String taskState, String taskId) {
 		String sql = String.format(
 				"update schedule set  " + " hostname  = '%s'," + " type  = '%s'," + " threshold  = '%s',"
 						+ " taskType  = '%s'," + " taskValue  = '%s'," + " taskState  = '%s'"
 						+ " where   taskId  = '%s'",
-				hostname, type, threshold, taskId, taskType, taskValue, taskState, taskId);
+				hostname, type, threshold,  taskType, taskValue, taskState, taskId);
 		System.out.println(sql);
 		return db.update(sql);
 	}
@@ -106,7 +106,7 @@ public class ScheduleTaskDb {
 	}
 
 	/**
-	 * 获取全部任务
+	 * 获取全部运行任务
 	 * 
 	 * @return list
 	 */
@@ -127,6 +127,31 @@ public class ScheduleTaskDb {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	
+	/**
+	 * 获取全部运行任务
+	 * 
+	 * @return list
+	 */
+	public Schedule getTaskId(String taskId) {
+		Schedule schedule= null;
+		ResultSet rs;
+		try {
+			rs = db.select(String.format("select * from " + table + " where taskId = '%s'",taskId));
+			while (rs.next()) {
+				schedule = new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
+						rs.getString("threshold"), rs.getString("taskId"), rs.getString("taskType"),
+						rs.getString("taskValue"), rs.getString("taskState"));
+			}
+			rs.close();
+			db.close_connection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return schedule;
 	}
 
 }
