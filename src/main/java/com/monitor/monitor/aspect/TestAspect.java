@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 public class TestAspect {
 
-	@Pointcut("execution(* com.monitor.monitor.controller..*(..))")
+	@Pointcut("execution(* com.monitor.monitor.controller.ESQueryController.*(..))")
 	public void Pointcut() {
 	}
 

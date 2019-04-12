@@ -1,81 +1,31 @@
 package com.monitor.monitor.been;
 
+import com.monitor.monitor.schedule.SpringDynamicCronTask;
+
 public class Task {
-	public String Id;
-	public String hostname;// 主机名字
-	public String type; //监控类型
-	public String threshold; // 阈值
-	public String taskId; // 定时任务Id
-	public String taskType;// 定时类型（秒，分钟，小时，天）
-	public String taskValue;// 任务时间
-	public String taskState;// 任务状态（运行，暂停）
-	
-	
-	@Override
-	public String toString() {
-		return "Task [Id=" + Id + ", hostname=" + hostname + ", type=" + type + ", threshold=" + threshold + ", taskId="
-				+ taskId + ", taskType=" + taskType + ", taskValue=" + taskValue + ", taskState=" + taskState + "]";
+	private Schedule schedule;
+	private SpringDynamicCronTask springDynamicCronTask;
+	public Schedule getSchedule() {
+		return schedule;
 	}
-	public Task(String id, String hostname, String type, String threshold, String taskId, String taskType,
-			String taskValue, String taskState) {
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
+	public Task(Schedule schedule, SpringDynamicCronTask springDynamicCronTask) {
 		super();
-		Id = id;
-		this.hostname = hostname;
-		this.type = type;
-		this.threshold = threshold;
-		this.taskId = taskId;
-		this.taskType = taskType;
-		this.taskValue = taskValue;
-		this.taskState = taskState;
+		this.schedule = schedule;
+		this.springDynamicCronTask = springDynamicCronTask;
 	}
-	public String getId() {
-		return Id;
+	public SpringDynamicCronTask getSpringDynamicCronTask() {
+		return springDynamicCronTask;
 	}
-	public void setId(String id) {
-		Id = id;
+	public void setSpringDynamicCronTask(SpringDynamicCronTask springDynamicCronTask) {
+		this.springDynamicCronTask = springDynamicCronTask;
 	}
-	public String getHostname() {
-		return hostname;
+	public Task() {
+		super();
 	}
-	public void setHostname(String hostname) {
-		this.hostname = hostname;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getThreshold() {
-		return threshold;
-	}
-	public void setThreshold(String threshold) {
-		this.threshold = threshold;
-	}
-	public String getTaskId() {
-		return taskId;
-	}
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-	public String getTaskType() {
-		return taskType;
-	}
-	public void setTaskType(String taskType) {
-		this.taskType = taskType;
-	}
-	public String getTaskValue() {
-		return taskValue;
-	}
-	public void setTaskValue(String taskValue) {
-		this.taskValue = taskValue;
-	}
-	public String getTaskState() {
-		return taskState;
-	}
-	public void setTaskState(String taskState) {
-		this.taskState = taskState;
-	}
+	
 
 	
 }

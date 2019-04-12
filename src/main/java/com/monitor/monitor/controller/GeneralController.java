@@ -17,14 +17,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.monitor.monitor.been.HostnameMap;
+import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.dao.AddressMapDb;
+import com.monitor.monitor.dao.ScheduleTaskDb;
 import com.monitor.monitor.es.Beat;
 import com.monitor.monitor.es.ESClient;
 import com.monitor.monitor.es.ESOperate;
 import com.monitor.monitor.es.type.FilesetType;
 import com.monitor.monitor.es.type.MetricSystemType;
+import com.monitor.monitor.es.type.ScheduleTaskType;
+import com.monitor.monitor.es.type.TaskStateType;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 import com.monitor.monitor.service.util.MyDataUtil;
+import com.monitor.monitor.service.util.MyMD5;
+import com.sun.javafx.scene.control.skin.TextAreaSkin;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -36,8 +42,10 @@ public class GeneralController {
 	@Autowired
 	private AddressMapDb amd;
 
-	//--------------------------------------主机映射--------------------------------------
-	
+	@Autowired
+	private ScheduleTaskDb std;
+	// --------------------------------------主机映射--------------------------------------
+
 	/**
 	 * 获取所有映射
 	 * 
@@ -92,9 +100,9 @@ public class GeneralController {
 	 * 删除主机-ip映射
 	 * 
 	 * @author wuzhe
-	 * @param id           id
-	 * @param hostname     新主机名
-	 * @param address      新ip地址
+	 * @param id       id
+	 * @param hostname 新主机名
+	 * @param address  新ip地址
 	 * @return true为删除成功，false删除失败，失败可能是参数有误
 	 */
 	@RequestMapping(value = "/hostmap/delete", method = RequestMethod.POST)
@@ -107,7 +115,101 @@ public class GeneralController {
 		return String.valueOf(deleteMap);
 	}
 
-	
-	
-	
+	// --------------------------------------定时任务--------------------------------------
+	/**
+	 * 获取定时任务
+	 * 
+	 * @author wuzhe
+	 * @return 返回Json数组形式的所有映射数据
+	 */
+	@RequestMapping(value = "/task/All", method = RequestMethod.GET)
+	public String task() {
+		List<Schedule> all = std.getAll();
+		return JSONArray.fromObject(all).toString();
+	}
+
+	/**
+	 * 添加定时任务
+	 * 
+	 * @author wuzhe
+	 * @param hostname  主机名称
+	 * @param type      监控类型(ScheduleTaskType)
+	 * @param threshold 阈值
+	 * @param taskType  任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
+	 *                  Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
+	 * @param taskValue 任务时间值
+	 * @param taskState 任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
+	 * @return true为添加成功，false添加失败，
+	 */
+	@RequestMapping(value = "/task/add", method = RequestMethod.POST)
+	public String task(@RequestParam(value = "hostname", required = true) String hostname,
+			@RequestParam(value = "type", required = true) String type,
+			@RequestParam(value = "threshold", required = true) String threshold,
+			@RequestParam(value = "taskType", required = true) String taskType,
+			@RequestParam(value = "taskValue", required = true) String taskValue,
+			@RequestParam(value = "taskState", required = true) String taskState) {
+
+		String taskId = MyMD5.Md5(hostname + type, String.valueOf(new Date().getTime()));
+
+		ScheduleTaskType stt = null;
+		if (taskType.equals(ScheduleTaskType.Second.toString())) {
+			stt = ScheduleTaskType.Second;
+		} else if (taskType.equals(ScheduleTaskType.Minute.toString())) {
+			stt = ScheduleTaskType.Minute;
+		} else if (taskType.equals(ScheduleTaskType.Day.toString())) {
+			stt = ScheduleTaskType.Day;
+		} else if (taskType.equals(ScheduleTaskType.H_M_S.toString())) {
+			stt = ScheduleTaskType.H_M_S;
+		}
+
+		TaskStateType tst = null;
+		if (taskState.equals(TaskStateType.Run.toString())) {
+			tst = TaskStateType.Run;
+		} else if (taskState.equals(TaskStateType.Stop.toString())) {
+			tst = TaskStateType.Stop;
+		}
+
+		boolean addMap = std.add(hostname, type, threshold, taskId, stt.toString(), taskValue, tst.toString());
+		return String.valueOf(addMap);
+	}
+
+	/**
+	 * 更新定时任务
+	 * 
+	 * @author wuzhe
+	 * @param hostname  主机名称
+	 * @param type      监控类型(ScheduleTaskType)
+	 * @param threshold 阈值
+	 * @param taskType  任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
+	 *                  Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
+	 * @param taskId    任务Id
+	 * @param taskValue 任务时间值
+	 * @param taskState 任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
+	 * @return true为添加成功，false添加失败，
+	 */
+	@RequestMapping(value = "/task/update", method = RequestMethod.POST)
+	public String task(@RequestParam(value = "hostname", required = true) String hostname,
+			@RequestParam(value = "type", required = true) String type,
+			@RequestParam(value = "threshold", required = true) String threshold,
+			@RequestParam(value = "taskType", required = true) String taskType,
+			@RequestParam(value = "taskId", required = true) String taskId,
+			@RequestParam(value = "taskValue", required = true) String taskValue,
+			@RequestParam(value = "taskState", required = true) String taskState) {
+
+		boolean updateMap = std.updateMap(hostname, type, threshold, taskId, taskType, taskValue, taskState);
+		return String.valueOf(updateMap);
+	}
+
+	/**
+	 * 更新定时任务
+	 * 
+	 * @author wuzhe
+	 * @param taskId 任务Id
+	 * @return true为删除成功，false删除失败，
+	 */
+	@RequestMapping(value = "/task/delete", method = RequestMethod.POST)
+	public String task(@RequestParam(value = "taskId", required = true) String taskId) {
+		boolean deleteMap = std.deleteMap(taskId);
+		return String.valueOf(deleteMap);
+	}
 }

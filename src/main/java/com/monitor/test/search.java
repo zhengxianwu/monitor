@@ -11,6 +11,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.been.Test;
 import com.monitor.monitor.dao.ScheduleTaskDb;
+import com.monitor.monitor.es.type.ScheduleTaskType;
 import com.monitor.monitor.service.util.MyMD5;
 
 public class search {
@@ -33,7 +34,6 @@ public class search {
 //		System.out.println(md5Hex);
 		String md5 = MyMD5.Md5("zhengxian", String.valueOf(new Date().getTime()));
 		System.out.println(md5);
-		
 	}
 
 }
