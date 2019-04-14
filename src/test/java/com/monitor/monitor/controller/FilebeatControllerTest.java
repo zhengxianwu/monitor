@@ -39,6 +39,8 @@ public class FilebeatControllerTest {
 	public void test() throws Exception {
 		MvcResult andReturn = mockMvc
 				.perform(MockMvcRequestBuilders.get("/Filebeat/getFileLog").param("hostname", hostname_1).param("filename", "zhengxian.log")
+						.param("from", "0")
+						.param("size", "1")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andDo(MockMvcResultHandlers.print()).andReturn();
 		System.out.println("getFileLog :" + andReturn.getResponse().getContentAsString());
