@@ -13,8 +13,9 @@ import com.alibaba.fastjson.JSON;
 
 
 /**
- * Created by KAI on 2017/11/15.
- * ectest@foxmail.com
+ * 
+ * @author wuzhe
+ * 
  */
 @Component
 public class DingtalkRobotUtil {
@@ -99,9 +100,5 @@ public class DingtalkRobotUtil {
 
     }
     
-    
-    
-    
-  
 
 }

@@ -1,14 +1,14 @@
 package com.monitor.monitor.been;
 
 public class Schedule {
-	public String Id;
-	public String hostname;// 主机名字
-	public String type; //监控类型
-	public String threshold; // 阈值
-	public String taskId; // 定时任务Id
-	public String taskType;// 定时类型（秒，分钟，小时，天）
-	public String taskValue;// 任务时间
-	public String taskState;// 任务状态（运行，暂停）
+	private String Id;
+	private String hostname;// 主机名字
+	private String type; //监控类型
+	private String threshold; // 阈值
+	private String taskId; // 定时任务Id
+	private String taskType;// 定时类型（秒，分钟，小时，天）
+	private String taskValue;// 任务时间
+	private String taskState;// 任务状态（运行，暂停）
 	
 	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
 			String taskValue, String taskState) {

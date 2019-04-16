@@ -26,11 +26,14 @@ import com.monitor.monitor.es.ESOperate;
 import com.monitor.monitor.es.type.FilesetType;
 import com.monitor.monitor.es.type.MetricSystemType;
 import com.monitor.monitor.es.type.ScheduleTaskType;
+import com.monitor.monitor.es.type.TaskMonitorType;
 import com.monitor.monitor.es.type.TaskStateType;
 import com.monitor.monitor.schedule.TaskManagement;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 import com.monitor.monitor.service.util.MyDataUtil;
 import com.monitor.monitor.service.util.MyMD5;
+import com.monitor.monitor.service.util.TaskUtil;
+import com.sun.javafx.image.IntPixelGetter;
 import com.sun.javafx.scene.control.skin.TextAreaSkin;
 
 import net.sf.json.JSONArray;
@@ -138,11 +141,13 @@ public class GeneralController {
 	 * 
 	 * @author wuzhe
 	 * @param hostname  主机名称
-	 * @param type      监控类型(ScheduleTaskType)
+	 * @param type      监控类型[Memory("运行内存"), Cpu("Cpu"),
+	 *                  Filesystem("磁盘");](TaskMonitorType)
 	 * @param threshold 阈值
 	 * @param taskType  任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
 	 *                  Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
-	 * @param taskValue 任务时间值
+	 * @param taskValue 任务时间值(必须正整数)【秒，分钟，天：直接填写数字：如10】，H_M_S : 1_15_3
+	 *                  (1小时，15分钟，3秒定时)
 	 * @param taskState 任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
 	 * @return true为添加成功，false添加失败，
 	 */
@@ -156,17 +161,39 @@ public class GeneralController {
 
 		String taskId = MyMD5.Md5(hostname + type, String.valueOf(new Date().getTime()));
 
+		// 监控类型
+		TaskMonitorType tmt = null;
+		if (type.equals(TaskMonitorType.Cpu.toString())) {
+			tmt = TaskMonitorType.Cpu;
+		} else if (taskType.equals(TaskMonitorType.Memory.toString())) {
+			tmt = TaskMonitorType.Memory;
+		} else if (taskType.equals(TaskMonitorType.Filesystem.toString())) {
+			tmt = TaskMonitorType.Filesystem;
+		}
+
+		// 定时类型
 		ScheduleTaskType stt = null;
 		if (taskType.equals(ScheduleTaskType.Second.toString())) {
 			stt = ScheduleTaskType.Second;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
 		} else if (taskType.equals(ScheduleTaskType.Minute.toString())) {
 			stt = ScheduleTaskType.Minute;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
 		} else if (taskType.equals(ScheduleTaskType.Day.toString())) {
 			stt = ScheduleTaskType.Day;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
 		} else if (taskType.equals(ScheduleTaskType.H_M_S.toString())) {
 			stt = ScheduleTaskType.H_M_S;
+			for (String s : taskValue.split("_")) {
+				if (!TaskUtil.isInteger(s))
+					return String.valueOf(false);
+			}
 		}
 
+		// 运行状态
 		TaskStateType tst = null;
 		if (taskState.equals(TaskStateType.Run.toString())) {
 			tst = TaskStateType.Run;
@@ -174,16 +201,14 @@ public class GeneralController {
 			tst = TaskStateType.Stop;
 		}
 
-		boolean addMap = std.add(hostname, type, threshold, taskId, stt.toString(), taskValue, tst.toString());
+		boolean addMap = std.add(hostname, tmt.toString(), threshold, taskId, stt.toString(), taskValue,
+				tst.toString());
 
-		
-		//启动任务
-		if(tst == TaskStateType.Run) 
-		{
+		// 启动任务
+		if (tst == TaskStateType.Run) {
 			taskManage.addTask(std.getTaskId(taskId));
 		}
-		
-		
+
 		return String.valueOf(addMap);
 	}
 
@@ -192,7 +217,8 @@ public class GeneralController {
 	 * 
 	 * @author wuzhe
 	 * @param hostname  主机名称
-	 * @param type      监控类型(ScheduleTaskType)
+	 * @param type      监控类型[Memory("运行内存"), Cpu("Cpu"),
+	 *                  Filesystem("磁盘");](TaskMonitorType)
 	 * @param threshold 阈值
 	 * @param taskType  任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
 	 *                  Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
@@ -212,30 +238,76 @@ public class GeneralController {
 		boolean updateMap = true;
 		Schedule oldSchedule = std.getTaskId(taskId);
 
-		////新的与旧的都等于停止
-		if(oldSchedule.taskState.equals(TaskStateType.Stop.toString()) && taskState.equals(TaskStateType.Stop.toString())){
-			updateMap = std.updateMap(hostname, type, threshold, taskType, taskValue, taskState, taskId);
-		}else {
-		//任务判断
-			//更新
-			updateMap = std.updateMap(hostname, type, threshold, taskType, taskValue, taskState, taskId);
-			if(updateMap) { //更新成功执行
+		// 监控类型
+		TaskMonitorType tmt = null;
+		if (type.equals(TaskMonitorType.Cpu.toString())) {
+			tmt = TaskMonitorType.Cpu;
+		} else if (taskType.equals(TaskMonitorType.Memory.toString())) {
+			tmt = TaskMonitorType.Memory;
+		} else if (taskType.equals(TaskMonitorType.Filesystem.toString())) {
+			tmt = TaskMonitorType.Filesystem;
+		}
+
+		// 定时类型
+		ScheduleTaskType stt = null;
+		if (taskType.equals(ScheduleTaskType.Second.toString())) {
+			stt = ScheduleTaskType.Second;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
+		} else if (taskType.equals(ScheduleTaskType.Minute.toString())) {
+			stt = ScheduleTaskType.Minute;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
+		} else if (taskType.equals(ScheduleTaskType.Day.toString())) {
+			stt = ScheduleTaskType.Day;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
+		} else if (taskType.equals(ScheduleTaskType.H_M_S.toString())) {
+			stt = ScheduleTaskType.H_M_S;
+			for (String s : taskValue.split("_")) {
+				if (!TaskUtil.isInteger(s))
+					return String.valueOf(false);
+			}
+		}
+
+		// 运行状态
+		TaskStateType tst = null;
+		if (taskState.equals(TaskStateType.Run.toString())) {
+			tst = TaskStateType.Run;
+		} else if (taskState.equals(TaskStateType.Stop.toString())) {
+			tst = TaskStateType.Stop;
+		}
+
+		//// 新的与旧的都等于停止
+		if (oldSchedule.getTaskState().equals(TaskStateType.Stop.toString())
+				&& taskState.equals(TaskStateType.Stop.toString())) {
+			updateMap = std.updateMap(hostname, tmt.toString(), threshold, stt.toString(), taskValue, tst.toString(),
+					taskId);
+		} else {
+			// 任务判断
+			// 更新
+			updateMap = std.updateMap(hostname, tmt.toString(), threshold, stt.toString(), taskValue, tst.toString(),
+					taskId);
+			if (updateMap) { // 更新成功执行
 				// 启动 -> 停止
-				if (oldSchedule.taskState.equals(TaskStateType.Run.toString()) && taskState.equals(TaskStateType.Stop.toString())) {
+				if (oldSchedule.getTaskState().equals(TaskStateType.Run.toString())
+						&& taskState.equals(TaskStateType.Stop.toString())) {
 					taskManage.removeTask(taskId);
 				}
 				// 停止 -> 启动
-				if (oldSchedule.taskState.equals(TaskStateType.Stop.toString()) && taskState.equals(TaskStateType.Run.toString())) {
+				if (oldSchedule.getTaskState().equals(TaskStateType.Stop.toString())
+						&& taskState.equals(TaskStateType.Run.toString())) {
 					taskManage.removeTask(taskId);
 					taskManage.addTask(std.getTaskId(taskId));
 				}
-				
-				// 停止 -> 启动
-				if (oldSchedule.taskState.equals(TaskStateType.Run.toString()) && taskState.equals(TaskStateType.Run.toString())) {
+
+				// Run -> 启动
+				if (oldSchedule.getTaskState().equals(TaskStateType.Run.toString())
+						&& taskState.equals(TaskStateType.Run.toString())) {
 					taskManage.removeTask(taskId);
 					taskManage.addTask(std.getTaskId(taskId));
 				}
-				
+
 			}
 		}
 
