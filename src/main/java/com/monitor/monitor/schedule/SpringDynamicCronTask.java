@@ -29,6 +29,7 @@ import com.monitor.monitor.es.ESClient;
 import com.monitor.monitor.es.ESOperate;
 import com.monitor.monitor.es.module.MetricModule;
 import com.monitor.monitor.es.type.MetricSystemType;
+import com.monitor.monitor.es.type.OperationType;
 import com.monitor.monitor.es.type.ScheduleTaskType;
 import com.monitor.monitor.es.type.TaskMonitorType;
 import com.monitor.monitor.es.type.TaskStateType;
@@ -46,6 +47,8 @@ import net.sf.json.JSONObject;
 //@EnableScheduling
 public class SpringDynamicCronTask {
 //implements SchedulingConfigurer
+
+	private String token = "2dced5c5d02e3a8b2769e61236bba976ab3dce7eb6de7883b14c2617145f7006";
 
 	private DingtalkRobotUtil dingtalk;
 	private ESOperate esOperate;
@@ -75,11 +78,10 @@ public class SpringDynamicCronTask {
 		scheduledFuture = threadPoolTaskScheduler.schedule(new Runnable() {
 			@Override
 			public void run() {
-				// 任务逻辑
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				// 业务逻辑
-				System.out.println(schedule.getHostname() + " : " + schedule.getTaskId() + " is running..." + ",时间为:"
-						+ simpleDateFormat.format(new Date()));
+//				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//				System.out.println(schedule.getHostname() + " : " + schedule.getTaskId() + " is running..." + ",时间为:"
+//						+ simpleDateFormat.format(new Date()));
 
 				TransportClient client = null;
 				try {
@@ -94,6 +96,7 @@ public class SpringDynamicCronTask {
 				String type = schedule.getType();// 监控类型
 				String taskValue = schedule.getTaskValue();
 				String threshold = schedule.getThreshold();// 阈值
+				String operationType = schedule.getOperationType();
 
 				String[] taskRange = MyTimeUtil.getTaskRange(schedule.getTaskType(), taskValue);
 				String startTime = taskRange[0];
@@ -101,6 +104,18 @@ public class SpringDynamicCronTask {
 				String indexName;
 
 				List<String> metricNewData = null;
+
+				// 操作符号
+				OperationType ot = null;
+				if (operationType.equals(OperationType.Gte.toString())) {
+					ot = OperationType.Gte; // 大于等于
+				} else if (operationType.equals(OperationType.Lte.toString())) {
+					ot = OperationType.Lte; // 小于等于
+				} else if (operationType.equals(OperationType.Gt.toString())) {
+					ot = OperationType.Gt; // 大于
+				} else if (operationType.equals(OperationType.Lt.toString())) {
+					ot = OperationType.Lt; // 小于
+				}
 
 				// 2、判断时间是否超过临界值（按日判断），超过则用全索引
 				if (MyTimeUtil.isGteDay(taskRange)) {
@@ -123,35 +138,59 @@ public class SpringDynamicCronTask {
 				metricNewData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime,
 						Beat.metricset.toString(), MetricModule.system.toString(), systemType, SortOrder.DESC);
 
-				// 3、再判断含有超过阈值的数据，再判断是否发送软件
+				// 4、再判断含有超过阈值的数据，再判断是否发送软件
 				if (metricNewData != null) {
 					if (metricNewData.size() > 0) {// 含有数据
-
 						ArrayList<String> list = new ArrayList<>();
 						// 判断是否有大于阈值的
 						for (String str : metricNewData) {
-							JSONObject json = JSONObject.fromObject(str);
-							JSONObject system = json.getJSONObject("system");
-							JSONObject cpu = system.getJSONObject("cpu");
-							JSONObject system_cpu = cpu.getJSONObject("system");
-							JSONObject system_user = cpu.getJSONObject("user");
-							double cores = Double.valueOf(cpu.getString("cores"));
-							double system_cpu_value = Double.valueOf(system_cpu.getString("pct"));
-							double system_user_value = Double.valueOf(system_user.getString("pct"));
-							double cpu_usage = (system_cpu_value + system_user_value) / cores;
-							String value = MyDataUtil.formatDouble(cpu_usage * 100);
-							if (Double.parseDouble(value) >= Double.parseDouble(threshold)) {
-								System.out.println("value" + value + ">= threshold" + threshold);
-								list.add(value);
+							String value = null;
+							if (type.equals(TaskMonitorType.Cpu.toString())) {
+								value = getCpuValue(str);
+							} else if (type.equals(TaskMonitorType.Memory.toString())) {
+
+							} else if (type.equals(TaskMonitorType.Filesystem.toString())) {
+
+							}
+
+							// 判断值操作
+							switch (ot) {
+							case Gte:
+								if (Double.parseDouble(value) >= Double.parseDouble(threshold)) {
+									System.out.println("value" + value + ">= threshold" + threshold);
+									list.add(value);
+								}
+								break;
+							case Lte:
+								if (Double.parseDouble(value) <= Double.parseDouble(threshold)) {
+									System.out.println("value" + value + "<= threshold" + threshold);
+									list.add(value);
+								}
+								break;
+							case Gt:
+								if (Double.parseDouble(value) > Double.parseDouble(threshold)) {
+									System.out.println("value" + value + "> threshold" + threshold);
+									list.add(value);
+								}
+								break;
+							case Lt:
+								if (Double.parseDouble(value) < Double.parseDouble(threshold)) {
+									System.out.println("value" + value + "< threshold" + threshold);
+									list.add(value);
+								}
+								break;
 							}
 						}
-						String text = "hostname :" + hostname + "，监控类型："
-								+ schedule.getType() + "，阈值 ：" + threshold + ",超过阈值监控记录：" + list.size() +",监控值分别为：";
-						for(String s : list) {
-							text += s+",";
+
+						String text = "hostname :" + hostname + "，监控类型：" + schedule.getType() + "，阈值 ：" + threshold
+								+ ",超过阈值监控记录：" + list.size() + ",监控值分别为：";
+						for (String s : list) {
+							text += s + ",";
 						}
-						String messageText = dingtalk.messageText(text, null, false);
+						String messageText = dingtalk.messageText(text, null, false, token);
 						System.out.println(messageText);
+						
+						
 					} else {// 没有数据
 
 					}
@@ -180,4 +219,22 @@ public class SpringDynamicCronTask {
 		return this.schedule;
 	}
 
+	/**
+	 * cpu单个值
+	 * 
+	 * @param str 需要过滤数据
+	 * @return 返回单条纪录得cpu值
+	 */
+	public String getCpuValue(String str) {
+		JSONObject json = JSONObject.fromObject(str);
+		JSONObject system = json.getJSONObject("system");
+		JSONObject cpu = system.getJSONObject("cpu");
+		JSONObject system_cpu = cpu.getJSONObject("system");
+		JSONObject system_user = cpu.getJSONObject("user");
+		double cores = Double.valueOf(cpu.getString("cores"));
+		double system_cpu_value = Double.valueOf(system_cpu.getString("pct"));
+		double system_user_value = Double.valueOf(system_user.getString("pct"));
+		double cpu_usage = (system_cpu_value + system_user_value) / cores;
+		return MyDataUtil.formatDouble(cpu_usage * 100);
+	}
 }

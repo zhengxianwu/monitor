@@ -22,7 +22,7 @@ public class DingtalkRobotUtil {
 	
 	private  String token = "2dced5c5d02e3a8b2769e61236bba976ab3dce7eb6de7883b14c2617145f7006";
 	
-    private  String URL = String.format("https://oapi.dingtalk.com/robot/send?access_token=%s",token);
+    private  String URL = "https://oapi.dingtalk.com/robot/send?access_token=";
     
     @Autowired
     private MapFactory factory;
@@ -33,7 +33,7 @@ public class DingtalkRobotUtil {
      * @param message
      * @return
      */
-    public  String messageText(String message, String[] at, boolean isAtAll) {
+    public  String messageText(String message, String[] at, boolean isAtAll,String token) {
 
         Map<String, Object> map = factory.of(
                 "msgtype", "text",
@@ -42,7 +42,7 @@ public class DingtalkRobotUtil {
                 "isAtAll", isAtAll
         );
 
-        return post(map);
+        return post(map,token);
     }
 
     /**
@@ -54,7 +54,7 @@ public class DingtalkRobotUtil {
      * @param messageUrl
      * @return
      */
-    public  String messageLink(String text, String title, String picUrl, String messageUrl, String[] at, boolean isAtAll) {
+    public  String messageLink(String text, String title, String picUrl, String messageUrl, String[] at, boolean isAtAll,String token) {
 
         Map<String, Object> map = factory.of(
                 "msgtype", "link",
@@ -63,7 +63,7 @@ public class DingtalkRobotUtil {
                 "isAtAll", isAtAll
         );
 
-        return post(map);
+        return post(map,token);
     }
 
     /**
@@ -73,7 +73,7 @@ public class DingtalkRobotUtil {
      * @param title
      * @return
      */
-    public  String messageMarkdown(String text, String title, String[] at, boolean isAtAll) {
+    public  String messageMarkdown(String text, String title, String[] at, boolean isAtAll,String token) {
 
         Map<String, Object> map = factory.of(
                 "msgtype", "markdown",
@@ -82,16 +82,15 @@ public class DingtalkRobotUtil {
                 "isAtAll", isAtAll
         );
 
-        return post(map);
+        return post(map,token);
     }
 
-
-    private  String post(Map body) {
+    private  String post(Map body,String token) {
 
         String returnString = null;
 
         try {
-            returnString = Request.Post(URL).connectTimeout(3000)
+            returnString = Request.Post(URL+token).connectTimeout(3000)
                     .bodyString(JSON.toJSONString(body), ContentType.APPLICATION_JSON).execute().returnContent().asString();
         } catch (IOException e) {
             e.printStackTrace();

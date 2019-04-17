@@ -1,15 +1,9 @@
 package com.monitor.monitor.controller;
 
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,27 +11,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.monitor.monitor.been.HostnameMap;
+import com.monitor.monitor.been.NailingRobotMap;
 import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.dao.AddressMapDb;
+import com.monitor.monitor.dao.NailingRobotMapDb;
 import com.monitor.monitor.dao.ScheduleTaskDb;
-import com.monitor.monitor.es.Beat;
-import com.monitor.monitor.es.ESClient;
-import com.monitor.monitor.es.ESOperate;
-import com.monitor.monitor.es.type.FilesetType;
-import com.monitor.monitor.es.type.MetricSystemType;
+import com.monitor.monitor.es.type.OperationType;
 import com.monitor.monitor.es.type.ScheduleTaskType;
 import com.monitor.monitor.es.type.TaskMonitorType;
 import com.monitor.monitor.es.type.TaskStateType;
 import com.monitor.monitor.schedule.TaskManagement;
-import com.monitor.monitor.service.metricbeat.Metircbeat;
-import com.monitor.monitor.service.util.MyDataUtil;
 import com.monitor.monitor.service.util.MyMD5;
 import com.monitor.monitor.service.util.TaskUtil;
-import com.sun.javafx.image.IntPixelGetter;
-import com.sun.javafx.scene.control.skin.TextAreaSkin;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 @CrossOrigin
 @RestController
@@ -48,6 +35,9 @@ public class GeneralController {
 
 	@Autowired
 	private ScheduleTaskDb std;
+
+	@Autowired
+	private NailingRobotMapDb nrm;
 
 	@Autowired
 	private TaskManagement taskManage;
@@ -140,15 +130,17 @@ public class GeneralController {
 	 * 添加定时任务
 	 * 
 	 * @author wuzhe
-	 * @param hostname  主机名称
-	 * @param type      监控类型[Memory("运行内存"), Cpu("Cpu"),
-	 *                  Filesystem("磁盘");](TaskMonitorType)
-	 * @param threshold 阈值
-	 * @param taskType  任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
-	 *                  Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
-	 * @param taskValue 任务时间值(必须正整数)【秒，分钟，天：直接填写数字：如10】，H_M_S : 1_15_3
-	 *                  (1小时，15分钟，3秒定时)
-	 * @param taskState 任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
+	 * @param hostname      主机名称
+	 * @param type          监控类型[Memory("运行内存"), Cpu("Cpu"),
+	 *                      Filesystem("磁盘");](TaskMonitorType)
+	 * @param threshold     阈值
+	 * @param taskType      任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
+	 *                      Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType)
+	 *                      ]
+	 * @param taskValue     任务时间值(必须正整数)【秒，分钟，天：直接填写数字：如10】，H_M_S : 1_15_3
+	 *                      (1小时，15分钟，3秒定时)
+	 * @param taskState     任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
+	 * @param operationType 数值比较指令，传参{ Gte(大于等于) , Lte(小于等于) , Gt(大于) , Lt(小于)}
 	 * @return true为添加成功，false添加失败，
 	 */
 	@RequestMapping(value = "/task/add", method = RequestMethod.POST)
@@ -157,7 +149,8 @@ public class GeneralController {
 			@RequestParam(value = "threshold", required = true) String threshold,
 			@RequestParam(value = "taskType", required = true) String taskType,
 			@RequestParam(value = "taskValue", required = true) String taskValue,
-			@RequestParam(value = "taskState", required = true) String taskState) {
+			@RequestParam(value = "taskState", required = true) String taskState,
+			@RequestParam(value = "operationType", required = true) String operationType) {
 
 		String taskId = MyMD5.Md5(hostname + type, String.valueOf(new Date().getTime()));
 
@@ -193,6 +186,18 @@ public class GeneralController {
 			}
 		}
 
+		// 操作符号
+		OperationType ot = null;
+		if (operationType.equals(OperationType.Gte.toString())) {
+			ot = OperationType.Gte; // 大于等于
+		} else if (operationType.equals(OperationType.Lte.toString())) {
+			ot = OperationType.Lte; // 小于等于
+		} else if (operationType.equals(OperationType.Gt.toString())) {
+			ot = OperationType.Gt; // 大于
+		} else if (operationType.equals(OperationType.Lt.toString())) {
+			ot = OperationType.Lt; // 小于
+		}
+
 		// 运行状态
 		TaskStateType tst = null;
 		if (taskState.equals(TaskStateType.Run.toString())) {
@@ -201,8 +206,8 @@ public class GeneralController {
 			tst = TaskStateType.Stop;
 		}
 
-		boolean addMap = std.add(hostname, tmt.toString(), threshold, taskId, stt.toString(), taskValue,
-				tst.toString());
+		boolean addMap = std.add(hostname, tmt.toString(), threshold, taskId, stt.toString(), taskValue, tst.toString(),
+				ot.toString());
 
 		// 启动任务
 		if (tst == TaskStateType.Run) {
@@ -216,15 +221,17 @@ public class GeneralController {
 	 * 更新定时任务
 	 * 
 	 * @author wuzhe
-	 * @param hostname  主机名称
-	 * @param type      监控类型[Memory("运行内存"), Cpu("Cpu"),
-	 *                  Filesystem("磁盘");](TaskMonitorType)
-	 * @param threshold 阈值
-	 * @param taskType  任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
-	 *                  Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
-	 * @param taskId    任务Id
-	 * @param taskValue 任务时间值
-	 * @param taskState 任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
+	 * @param hostname      主机名称
+	 * @param type          监控类型[Memory("运行内存"), Cpu("Cpu"),
+	 *                      Filesystem("磁盘");](TaskMonitorType)
+	 * @param threshold     阈值
+	 * @param taskType      任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
+	 *                      Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType)
+	 *                      ]
+	 * @param taskId        任务Id
+	 * @param taskValue     任务时间值
+	 * @param taskState     任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
+	 * @param operationType 数值比较指令，传参{ Gte(大于等于) , Lte(小于等于) , Gt(大于) , Lt(小于)}
 	 * @return true为添加成功，false添加失败，
 	 */
 	@RequestMapping(value = "/task/update", method = RequestMethod.POST)
@@ -234,7 +241,8 @@ public class GeneralController {
 			@RequestParam(value = "taskType", required = true) String taskType,
 			@RequestParam(value = "taskId", required = true) String taskId,
 			@RequestParam(value = "taskValue", required = true) String taskValue,
-			@RequestParam(value = "taskState", required = true) String taskState) {
+			@RequestParam(value = "taskState", required = true) String taskState,
+			@RequestParam(value = "operationType", required = true) String operationType) {
 		boolean updateMap = true;
 		Schedule oldSchedule = std.getTaskId(taskId);
 
@@ -270,6 +278,18 @@ public class GeneralController {
 			}
 		}
 
+		// 操作符号
+		OperationType ot = null;
+		if (operationType.equals(OperationType.Gte.toString())) {
+			ot = OperationType.Gte; // 大于等于
+		} else if (operationType.equals(OperationType.Lte.toString())) {
+			ot = OperationType.Lte; // 小于等于
+		} else if (operationType.equals(OperationType.Gt.toString())) {
+			ot = OperationType.Gt; // 大于
+		} else if (operationType.equals(OperationType.Lt.toString())) {
+			ot = OperationType.Lt; // 小于
+		}
+
 		// 运行状态
 		TaskStateType tst = null;
 		if (taskState.equals(TaskStateType.Run.toString())) {
@@ -282,12 +302,12 @@ public class GeneralController {
 		if (oldSchedule.getTaskState().equals(TaskStateType.Stop.toString())
 				&& taskState.equals(TaskStateType.Stop.toString())) {
 			updateMap = std.updateMap(hostname, tmt.toString(), threshold, stt.toString(), taskValue, tst.toString(),
-					taskId);
+					ot.toString(), taskId);
 		} else {
 			// 任务判断
 			// 更新
 			updateMap = std.updateMap(hostname, tmt.toString(), threshold, stt.toString(), taskValue, tst.toString(),
-					taskId);
+					ot.toString(), taskId);
 			if (updateMap) { // 更新成功执行
 				// 启动 -> 停止
 				if (oldSchedule.getTaskState().equals(TaskStateType.Run.toString())
@@ -327,4 +347,62 @@ public class GeneralController {
 		taskManage.removeTask(taskId);
 		return String.valueOf(deleteMap);
 	}
+
+	// --------------------------------------钉钉映射--------------------------------------
+
+	/**
+	 * 获取所有钉钉机器人映射
+	 * 
+	 * @author wuzhe
+	 * @return 返回Json数组形式的所有映射数据
+	 */
+	@RequestMapping(value = "/DingTalk/All", method = RequestMethod.GET)
+	public String talk() {
+		List<NailingRobotMap> all = nrm.getAll();
+		return JSONArray.fromObject(all).toString();
+	}
+
+	/**
+	 * 添加钉钉机器人映射
+	 * 
+	 * @param rootName
+	 * @param rootToken
+	 * @return true为添加成功，false添加失败
+	 */
+	@RequestMapping(value = "/DingTalk/add", method = RequestMethod.POST)
+	public String talk(@RequestParam(value = "rootName", required = true) String rootName,
+			@RequestParam(value = "rootToken", required = true) String rootToken) {
+		String rootId = MyMD5.Md5(rootToken);
+		boolean addMap = nrm.addMap(rootId, rootName, rootToken);
+		return String.valueOf(addMap);
+	}
+
+	/**
+	 * 添加钉钉机器人映射
+	 * 
+	 * @param rootName
+	 * @param rootToken
+	 * @return true为添加成功，false添加失败
+	 */
+	@RequestMapping(value = "/DingTalk/update", method = RequestMethod.POST)
+	public String talk(@RequestParam(value = "rootId", required = true) String rootId,
+			@RequestParam(value = "rootName", required = true) String rootName,
+			@RequestParam(value = "rootToken", required = true) String rootToken) {
+		boolean addMap = nrm.updateMap(rootName, rootToken, rootId);
+		return String.valueOf(addMap);
+	}
+	
+	/**
+	 * 删除钉钉机器人映射
+	 * 
+	 * @param rootId 机器人id
+	 * @return true为添加成功，false添加失败
+	 */
+	@RequestMapping(value = "/DingTalk/delete", method = RequestMethod.POST)
+	public String talk(@RequestParam(value = "rootId", required = true) String rootId
+			) {
+		boolean addMap = nrm.deleteMap(rootId);
+		return String.valueOf(addMap);
+	}
+
 }

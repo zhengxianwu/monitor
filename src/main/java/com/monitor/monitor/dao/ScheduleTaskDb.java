@@ -40,7 +40,7 @@ public class ScheduleTaskDb {
 			while (rs.next()) {
 				list.add(new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
 						rs.getString("threshold"), rs.getString("taskId"), rs.getString("taskType"),
-						rs.getString("taskValue"), rs.getString("taskState")));
+						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType")));
 			}
 			rs.close();
 			db.close_connection();
@@ -64,10 +64,10 @@ public class ScheduleTaskDb {
 	 * @return
 	 */
 	public boolean add(String hostname, String type, String threshold, String taskId, String taskType, String taskValue,
-			String taskState) {
+			String taskState, String operationType) {
 		String sql = String.format(
-				"insert into schedule(hostname,type,threshold,taskId,taskType,taskValue,taskState) values('%s','%s','%s','%s','%s','%s','%s')",
-				hostname, type, threshold, taskId, taskType, taskValue, taskState);
+				"insert into schedule(hostname,type,threshold,taskId,taskType,taskValue,taskState,operationType) values('%s','%s','%s','%s','%s','%s','%s,%s')",
+				hostname, type, threshold, taskId, taskType, taskValue, taskState, operationType);
 		return db.insert(sql);
 	}
 
@@ -83,13 +83,13 @@ public class ScheduleTaskDb {
 	 * @param taskState (Run("运行"), Stop("暂停");)TaskStateType
 	 * @return
 	 */
-	public boolean updateMap(String hostname, String type, String threshold, String taskType,
-			String taskValue, String taskState, String taskId) {
+	public boolean updateMap(String hostname, String type, String threshold, String taskType, String taskValue,
+			String taskState, String operationType, String taskId) {
 		String sql = String.format(
 				"update schedule set  " + " hostname  = '%s'," + " type  = '%s'," + " threshold  = '%s',"
-						+ " taskType  = '%s'," + " taskValue  = '%s'," + " taskState  = '%s'"
-						+ " where   taskId  = '%s'",
-				hostname, type, threshold,  taskType, taskValue, taskState, taskId);
+						+ " taskType  = '%s'," + " taskValue  = '%s'," + " taskState  = '%s',"
+						+ " operationType  = '%s'" + " where   taskId  = '%s'",
+				hostname, type, threshold, taskType, taskValue, taskState, operationType, taskId);
 		System.out.println(sql);
 		return db.update(sql);
 	}
@@ -118,7 +118,7 @@ public class ScheduleTaskDb {
 			while (rs.next()) {
 				list.add(new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
 						rs.getString("threshold"), rs.getString("taskId"), rs.getString("taskType"),
-						rs.getString("taskValue"), rs.getString("taskState")));
+						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType")));
 			}
 			rs.close();
 			db.close_connection();
@@ -128,22 +128,21 @@ public class ScheduleTaskDb {
 		}
 		return list;
 	}
-	
-	
+
 	/**
 	 * 获取全部运行任务
 	 * 
 	 * @return list
 	 */
 	public Schedule getTaskId(String taskId) {
-		Schedule schedule= null;
+		Schedule schedule = null;
 		ResultSet rs;
 		try {
-			rs = db.select(String.format("select * from " + table + " where taskId = '%s'",taskId));
+			rs = db.select(String.format("select * from " + table + " where taskId = '%s'", taskId));
 			while (rs.next()) {
 				schedule = new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
 						rs.getString("threshold"), rs.getString("taskId"), rs.getString("taskType"),
-						rs.getString("taskValue"), rs.getString("taskState"));
+						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType"));
 			}
 			rs.close();
 			db.close_connection();

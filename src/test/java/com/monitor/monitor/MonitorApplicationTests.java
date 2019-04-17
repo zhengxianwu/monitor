@@ -14,7 +14,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.monitor.monitor.been.TestDemo;
 import com.monitor.monitor.es.ESClient;
 import com.monitor.monitor.es.type.MetricSystemType;
 import com.monitor.monitor.properties.ESConfig;
