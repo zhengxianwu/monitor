@@ -106,9 +106,12 @@ public class TaskManagement {
 		if (filterObj.size() == 0)
 			return true;
 		SpringDynamicCronTask filteTask = filterObj.get(0);
+		
 		// 2、移除列表
 		boolean remove = taskList.remove(filteTask);
 		System.err.println(filteTask.getSchedule().getTaskId() + " -> 移除成功 ：" + filteTask);
+		
+		
 		// 3、停止任务，销毁对象
 		filteTask.stopTask();
 		filteTask = null;
