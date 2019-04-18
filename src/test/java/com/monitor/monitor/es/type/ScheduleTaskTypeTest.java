@@ -34,15 +34,15 @@ public class ScheduleTaskTypeTest {
 	
 	@Test
 	public void addtest() {
-	  boolean add = std.add("zhengxian", "heihe", "asd", "asodko", "asdq", "asf", "adqdmqd","asd");
-	  System.out.println(add);
+//	  boolean add = std.add("zhengxian", "heihe", "asd", "asodko", "asdq", "asf", "adqdmqd","asd");
+//	  System.out.println(add);
 	}
 	
 	
 	@Test
 	public void updatetest() {
-	  boolean add = std.updateMap("测试更新", "heihe111", "asd222", "aso222dko", "asdq33", "as44f", "asodko","asd");
-	  System.out.println(add);
+//	  boolean add = std.updateMap("测试更新", "heihe111", "asd222", "aso222dko", "asdq33", "as44f", "asodko","asd");
+//	  System.out.println(add);
 	}
 
 }

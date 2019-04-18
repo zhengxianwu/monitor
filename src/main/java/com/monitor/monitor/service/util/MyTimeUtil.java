@@ -240,7 +240,7 @@ public class MyTimeUtil {
 		satrt.setTime(parse);
 		end.setTime(parse2);
 		int result = end.get(Calendar.DAY_OF_MONTH) - satrt.get(Calendar.DAY_OF_MONTH);
-		System.out.println(end.get(Calendar.DAY_OF_MONTH) + ":" + satrt.get(Calendar.DAY_OF_MONTH));
+//		System.out.println(end.get(Calendar.DAY_OF_MONTH) + ":" + satrt.get(Calendar.DAY_OF_MONTH));
 		// 判断开始天数比结束天数小，则用全部索引
 		if (result > 0) {
 			return true;

@@ -383,7 +383,7 @@ public class ESOperate {
 		// 尝试匹配id
 		startTime = MyTimeUtil.getLocalToUTC(startTime);
 		endTime = MyTimeUtil.getLocalToUTC(endTime);
-		System.out.println(startTime + "----" + endTime);
+//		System.out.println(startTime + "----" + endTime);
 		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
 		SearchResponse actionGet = b
 				.setQuery(QueryBuilders.boolQuery()

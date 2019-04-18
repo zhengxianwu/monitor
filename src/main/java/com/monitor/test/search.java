@@ -1,8 +1,11 @@
 package com.monitor.test;
 
+import java.util.ArrayList;
 import java.util.Date;
 
+import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.es.type.OperationType;
+import com.monitor.monitor.service.util.CustomTemplateUtil;
 import com.monitor.monitor.service.util.MyMD5;
 
 public class search {
@@ -32,8 +35,8 @@ public class search {
 		
 		
 		//自定义句子
-		String s = "{hostname}:123,${ok}";
-		String replaceAll = s.replaceAll("hostname", "zhengxian");
+		String s = "{主机名称}:123,${ok}";
+		String replaceAll = s.replaceAll("\\{主机名称\\}", "zhengxian");
 		System.out.println(replaceAll);
 		
 		
@@ -54,8 +57,16 @@ public class search {
 		default:
 			break;
 		}
-		
-		
+		Schedule schedule = new Schedule();
+		schedule.setType("Cpu");
+		schedule.setHostname("zhengxian");
+		ArrayList<String> matchingList = new ArrayList<>();
+		matchingList.add("123.3");
+		String expression = CustomTemplateUtil.Expression("主机名称 ： {主机名称}\r\n" + 
+				"监控类型 ：{监控类型}\r\n" + 
+				"超过阈值数量 :{超过阈值数量}\r\n" + 
+				"超过记录数据 ：{超过记录数据}", schedule, matchingList);
+		System.out.println(expression);
 		
 	}
 

@@ -12,9 +12,10 @@ public class Schedule {
 	private String taskValue;// 任务时间
 	private String taskState;// 任务状态（运行，暂停）TaskStateType
 	private String operationType;// 操作指令OperationType
-
+	
 	private String reminderType;// 通知类型 ReminderType
 	private String reminderId;// 通知Id,根据Id去查找通知配置属性
+	private String customExpression;//自定义通知表达式
 
 	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
 			String taskValue, String taskState, String operationType) {
@@ -44,6 +45,34 @@ public class Schedule {
 		this.operationType = operationType;
 		this.reminderType = reminderType;
 		this.reminderId = reminderId;
+	}
+	
+	
+
+	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
+			String taskValue, String taskState, String operationType, String reminderType, String reminderId,
+			String customExpression) {
+		super();
+		Id = id;
+		this.hostname = hostname;
+		this.type = type;
+		this.threshold = threshold;
+		this.taskId = taskId;
+		this.taskType = taskType;
+		this.taskValue = taskValue;
+		this.taskState = taskState;
+		this.operationType = operationType;
+		this.reminderType = reminderType;
+		this.reminderId = reminderId;
+		this.customExpression = customExpression;
+	}
+
+	public String getCustomExpression() {
+		return customExpression;
+	}
+
+	public void setCustomExpression(String customExpression) {
+		this.customExpression = customExpression;
 	}
 
 	public Schedule() {
