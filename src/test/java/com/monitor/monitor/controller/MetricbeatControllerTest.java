@@ -51,7 +51,7 @@ public class MetricbeatControllerTest {
 	@Test
 	public void CpuTest() throws Exception {
 		MvcResult andReturn = mockMvc
-				.perform(MockMvcRequestBuilders.get("metricbeat/getCPU").param("hostname", hostname_1)
+				.perform(MockMvcRequestBuilders.get("/metricbeat/getCPU").param("hostname", hostname_1)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andDo(MockMvcResultHandlers.print()).andReturn();
 		log.info("infoCpuTest :" + andReturn.getResponse().getContentAsString());

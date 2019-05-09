@@ -8,27 +8,30 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import com.monitor.monitor.es.type.ScheduleTaskType;
 import com.monitor.monitor.service.util.MyDataUtil;
 import com.monitor.monitor.service.util.MyTimeUtil;
 
-public class Test2 {
+public class MyTImeUtilText {
 
 	public static void main(String[] args) throws ParseException {
-		
+
 		String utctoLoaclTime = MyTimeUtil.UtctoLoaclTime("2019-03-06T03:32:08.299Z");
 		System.out.println(utctoLoaclTime);
 		String localToUTC2 = MyTimeUtil.getLocalToUTC("2019-03-06 11:32:08");
-		System.out.println( localToUTC2);
-		
-		
-		
+		System.out.println(localToUTC2);
+
 		String date = "2019-1-1";
 		SimpleDateFormat s = new SimpleDateFormat("YYYY-MM-dd");
 		Date parse = s.parse(date);
 		System.out.println(parse.getTime());
-		
+
 		String indexALL = MyDataUtil.getIndexALL("filebeat-6.4.3");
 		System.out.println(indexALL);
+
+		String[] taskRange = MyTimeUtil.getTaskRange(ScheduleTaskType.Hour.toString(), "15");
+		System.out.println(taskRange[0] + "---" + taskRange[1]);
+		System.out.println(MyTimeUtil.isGteDay(taskRange));
 	}
 
 }

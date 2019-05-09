@@ -40,7 +40,9 @@ public class Databases {
 			con = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			String uri = "jdbc:mysql://" + this.url + ":" + this.port + "/" + this.daobases;
+//			String uri = "jdbc:mysql://" + this.url + ":" + this.port + "/" + this.daobases +"?characterEncoding=utf-8";//防止乱码
+			String uri = "jdbc:mysql://" + this.url + ":" + this.port + "/" + this.daobases +"?useUnicode=true&characterEncoding=utf-8&autoReconnect=true";
+			
 			con = DriverManager.getConnection(uri, user, password);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

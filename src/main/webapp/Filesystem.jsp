@@ -18,7 +18,7 @@
                         type: "GET",
                         url: "/" + url,
                         async: false,
-                        data: "",
+                        data: "hostname=zhengxian",
                         success: function(data) {
                             k = data;
                             console.log(k);
@@ -51,7 +51,7 @@
                // showPro(getData("metricbeat/getCPU"));
                setInterval(function() {
                     showPro(eval("(" + getData("metricbeat/getFilesystem") + ")"));
-                }, 2000);
+                }, 20000);
 
 
 
@@ -62,34 +62,34 @@
 
 
                 $("#add").click(function() {
-                    var dom = '<div id="progress" class="progress" style="width: 300px;"><div id="pro" class="progress-bar" style="width: 0%"></div></div>';
-                    $("#progress").after(dom);
+                   // var dom = '<div id="progress" class="progress" style="width: 300px;"><div id="pro" class="progress-bar" style="width: 0%"></div></div>';
+                   // $("#progress").after(dom);
 
-                    // if (head_value >= 0 && head_value <= 30) {
-                    //     $("#pro").removeClass("progress-bar bg-success");
-                    // } else if (head_value >= 40 && head_value <= 50) {
-                    //     $("#pro").removeClass("progress-bar bg-info");
-                    // } else if (head_value > 50 && head_value <= 60) {
-                    //     $("#pro").removeClass("progress-bar bg-warning");
-                    // } else if (head_value > 60 && head_value <= 100) {
-                    //     $("#pro").removeClass("progress-bar bg-danger");
-                    // }
-                    // end_value += 1;
-                    // head_value = end_value;
+                    if (head_value >= 0 && head_value <= 30) {
+                        $("#pro").removeClass("progress-bar bg-success");
+                    } else if (head_value >= 40 && head_value <= 50) {
+                        $("#pro").removeClass("progress-bar bg-info");
+                    } else if (head_value > 50 && head_value <= 60) {
+                        $("#pro").removeClass("progress-bar bg-warning");
+                    } else if (head_value > 60 && head_value <= 100) {
+                        $("#pro").removeClass("progress-bar bg-danger");
+                    }
+                    end_value += 1;
+                    head_value = end_value;
 
-                    // if (end_value && end_value <= 30) {
-                    //     $("#pro").css("width", end_value + "%").text(end_value + "%");
-                    //     $("#pro").addClass("progress-bar bg-success");
-                    // } else if (end_value >= 40 && end_value <= 50) {
-                    //     $("#pro").css("width", end_value + "%").text(end_value + "%");
-                    //     $("#pro").addClass("progress-bar bg-info");
-                    // } else if (end_value > 50 && end_value <= 60) {
-                    //     $("#pro").css("width", end_value + "%").text(end_value + "%");
-                    //     $("#pro").addClass("progress-bar bg-warning");
-                    // } else if (end_value > 60 && end_value <= 100) {
-                    //     $("#pro").css("width", end_value + "%").text(end_value + "%");
-                    //     $("#pro").addClass("progress-bar bg-danger");
-                    // }
+                    if (end_value && end_value <= 30) {
+                        $("#pro").css("width", end_value + "%").text(end_value + "%");
+                        $("#pro").addClass("progress-bar bg-success");
+                    } else if (end_value >= 40 && end_value <= 50) {
+                        $("#pro").css("width", end_value + "%").text(end_value + "%");
+                        $("#pro").addClass("progress-bar bg-info");
+                    } else if (end_value > 50 && end_value <= 60) {
+                        $("#pro").css("width", end_value + "%").text(end_value + "%");
+                        $("#pro").addClass("progress-bar bg-warning");
+                    } else if (end_value > 60 && end_value <= 100) {
+                        $("#pro").css("width", end_value + "%").text(end_value + "%");
+                        $("#pro").addClass("progress-bar bg-danger");
+                    }
                 });
                 $("#sub").click(function() {
                     $("#pro").parent().empty();

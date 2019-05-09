@@ -36,6 +36,8 @@ public class MetricbeatController {
 //	@Qualifier("client")
 	private ESClient esClient;
 
+	
+	//获取最新一条数据
 	// hostname节点名称是根据ip映射电脑名称
 
 	/**
