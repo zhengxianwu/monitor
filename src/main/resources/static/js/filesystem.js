@@ -9,7 +9,7 @@ function showPro(arr) {
     for (var k in arr) {
         console.log(arr[k]);
         var d_name = arr[k].system.filesystem.device_name;
-        var d_value = arr[k].system.filesystem.used.pct * 100;
+        var d_value = arr[k].system.filesystem.used.pct * 100 / 10;
         d_value = d_value.toFixed(2); //四舍五入2位
         var sp = d_name.split(":");
         console.log(sp[0]);
