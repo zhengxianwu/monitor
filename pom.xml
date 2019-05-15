@@ -14,8 +14,8 @@
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>monitor</name>
-	<!-- war包配置 -->
-	<packaging>war</packaging>
+	<!-- war包配置
+	<packaging>war</packaging> -->
 	<description>project for Spring Boot</description>
 
 	<properties>
