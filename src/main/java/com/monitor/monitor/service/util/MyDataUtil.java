@@ -35,6 +35,12 @@ public class MyDataUtil {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
 	/**
 	 * 获取当天索引名字
 	 * @param indexVersion  索引
@@ -58,4 +64,8 @@ public class MyDataUtil {
 		String indexName = split[0]+ "-*";
 		return indexName;
 	}
+
+
+	
+
 }

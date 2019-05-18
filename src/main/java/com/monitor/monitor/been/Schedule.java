@@ -7,6 +7,7 @@ public class Schedule {
 	private String hostname;// 主机名字
 	private String type; // 监控类型TaskMonitorType
 	private String threshold; // 阈值
+	private String taskName;//任务名称
 	private String taskId; // 定时任务Id
 	private String taskType;// 定时类型（秒，分钟，小时，天）
 	private String taskValue;// 任务时间
@@ -16,6 +17,42 @@ public class Schedule {
 	private String reminderType;// 通知类型 ReminderType
 	private String reminderId;// 通知Id,根据Id去查找通知配置属性
 	private String customExpression;//自定义通知表达式
+
+	
+	/**
+	 * 含有任务名称
+	 * @param id
+	 * @param hostname
+	 * @param type
+	 * @param threshold
+	 * @param taskName
+	 * @param taskId
+	 * @param taskType
+	 * @param taskValue
+	 * @param taskState
+	 * @param operationType
+	 * @param reminderType
+	 * @param reminderId
+	 * @param customExpression
+	 */
+	public Schedule(String id, String hostname, String type, String threshold, String taskName, String taskId,
+			String taskType, String taskValue, String taskState, String operationType, String reminderType,
+			String reminderId, String customExpression) {
+		super();
+		Id = id;
+		this.hostname = hostname;
+		this.type = type;
+		this.threshold = threshold;
+		this.taskName = taskName;
+		this.taskId = taskId;
+		this.taskType = taskType;
+		this.taskValue = taskValue;
+		this.taskState = taskState;
+		this.operationType = operationType;
+		this.reminderType = reminderType;
+		this.reminderId = reminderId;
+		this.customExpression = customExpression;
+	}
 
 	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
 			String taskValue, String taskState, String operationType) {
@@ -48,6 +85,14 @@ public class Schedule {
 	}
 	
 	
+
+	public String getTaskName() {
+		return taskName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
 
 	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
 			String taskValue, String taskState, String operationType, String reminderType, String reminderId,

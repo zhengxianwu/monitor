@@ -22,6 +22,7 @@ import com.monitor.monitor.es.type.FilesetType;
 import com.monitor.monitor.es.type.MetricSystemType;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 import com.monitor.monitor.service.util.MyDataUtil;
+import com.monitor.monitor.service.util.MyTimeUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -91,11 +92,10 @@ public class ESQueryController {
 			}
 			beatName = "metricset";
 		}
-		
-		if(from.equals("")) {
-			from= "0";
-		}
 
+		if (from.equals("")) {
+			from = "0";
+		}
 
 		SortOrder Order;
 		if (sortOrder.equals("desc")) {
@@ -145,8 +145,7 @@ public class ESQueryController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "from", required = false, defaultValue = "") String from,
 			@RequestParam(value = "size", required = false, defaultValue = "") String size,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
-			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime) {
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
 		TransportClient client = null;
 		try {
 			client = esClient.getClient();
@@ -154,20 +153,30 @@ public class ESQueryController {
 			e.printStackTrace();
 		}
 
+		// 默认取全部索引
+		// 如果是当天的话就取当天索引，根据startTime和endTime来判断
 		String beatName = "";
 		if (indexName.equals("fileset")) {
-			if (indexTime.equals("")) {
-				indexName = MyDataUtil.getIndexFormat(fileset_version);
+			boolean gteDay = MyTimeUtil.isGteDay(new String[] { startTime, endTime });
+			if (gteDay) {
+//					时间差大于一天，全部索引
+				indexName = MyDataUtil.getIndexALL(fileset_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(fileset_version, indexTime);
+				// 获得当天索引
+				indexName = MyDataUtil.getIndexFormat(fileset_version, startTime);
 			}
+
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
-			if (indexTime.equals("")) {
-				indexName = MyDataUtil.getIndexFormat(metric_version);
+			boolean gteDay = MyTimeUtil.isGteDay(new String[] { startTime, endTime });
+			if (gteDay) {
+//				时间差大于一天，全部索引
+				indexName = MyDataUtil.getIndexALL(metric_version);
 			} else {
-				indexName = MyDataUtil.getIndexFormat(metric_version, indexTime);
+				// 获得传入时间索引
+				indexName = MyDataUtil.getIndexFormat(metric_version, startTime);
 			}
+
 			beatName = "metricset";
 		}
 
@@ -180,10 +189,15 @@ public class ESQueryController {
 
 		List<String> newData = null;
 		if ((from.equals("") || size.equals("")) && name.equals("")) {
-			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module, Order);
+			from = "0";
+			size = "10000";
+			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module,
+					Integer.parseInt(from), Integer.parseInt(size), Order);
 		} else if ((from.equals("") || size.equals("")) && !name.equals("")) {
+			from = "0";
+			size = "10000";
 			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module, name,
-					Order);
+					Integer.parseInt(from), Integer.parseInt(size), Order);
 		} else if ((!from.equals("") && !size.equals("")) && name.equals("")) {
 			newData = esOperate.rangeTime(client, indexName, hostname, startTime, endTime, beatName, module,
 					Integer.parseInt(from), Integer.parseInt(size), Order);
@@ -210,7 +224,7 @@ public class ESQueryController {
 	 * @param from      分页从第几行开始(可选)
 	 * @param size      分页长度(可选)
 	 * @param sortOrder 排序(可选)
-	 * @param indexTime  索引日期如： 2019-3-3（默认查询单天数据，如果要查询指定日期，则填写)
+	 * @param indexTime 索引日期如： 2019-3-3（默认查询单天数据，如果要查询指定日期，则填写)
 	 * @category 配对使用（startTime和endTime） ，（ from和size)必须两个一起
 	 * @return json数组
 	 */
@@ -222,7 +236,7 @@ public class ESQueryController {
 			@RequestParam(value = "from", required = false, defaultValue = "") String from,
 			@RequestParam(value = "size", required = false, defaultValue = "") String size,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
-			@RequestParam(value = "indexTime", required = false, defaultValue = "")String indexTime) {
+			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime) {
 		TransportClient client = null;
 		try {
 			client = esClient.getClient();

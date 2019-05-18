@@ -30,7 +30,10 @@ public class TimeUtilTest {
 
 	@Test
 	public void test() {
-		log.info("123");
+		String[] arr = {"2019-3-6 10:00:27","2019-3-7 10:00:27"};
+		boolean gteDay = MyTimeUtil.isGteDay(arr);
+		System.out.println(gteDay);
+		System.out.println(MyDataUtil.getIndexFormat("metric", "2019-3-6 10:00:27"));
 	}
 	
 }
