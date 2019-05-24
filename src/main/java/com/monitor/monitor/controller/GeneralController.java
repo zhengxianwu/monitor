@@ -295,7 +295,12 @@ public class GeneralController {
 			stt = ScheduleTaskType.Minute;
 			if (!TaskUtil.isInteger(taskValue))
 				return String.valueOf(false);
-		} else if (taskType.equals(ScheduleTaskType.Day.toString())) {
+		}else if (taskType.equals(ScheduleTaskType.Hour.toString())) {
+			stt = ScheduleTaskType.Hour;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
+		} 
+		else if (taskType.equals(ScheduleTaskType.Day.toString())) {
 			stt = ScheduleTaskType.Day;
 			if (!TaskUtil.isInteger(taskValue))
 				return String.valueOf(false);

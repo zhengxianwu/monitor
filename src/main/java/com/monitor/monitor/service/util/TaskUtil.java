@@ -6,6 +6,8 @@ import com.monitor.monitor.es.type.ScheduleTaskType;
 
 public class TaskUtil {
 
+	
+	//转换为定时表达式
 	public static String formatCron(String time, String stt) {
 		String result = null;
 		if (stt.equals(ScheduleTaskType.Second.toString())) {

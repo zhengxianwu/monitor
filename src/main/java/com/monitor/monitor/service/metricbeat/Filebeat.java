@@ -35,7 +35,7 @@ public class Filebeat {
 		List<String> list = null;
 		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
 		SearchResponse actionGet = b
-				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.regexpQuery("source", ".*" + filename))
+				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.regexpQuery("source", "*" + filename))
 						.filter(QueryBuilders.termQuery("beat.hostname", hostname))
 						.filter(QueryBuilders.termQuery("prospector.type", "log")))
 				.addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
