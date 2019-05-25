@@ -127,7 +127,8 @@ public class ESOperate {
 		return list;
 	}
 
-	/***
+	/**
+	 * /***
 	 * ES数据查询(module&name&size)
 	 * 
 	 * @param client      客户端
@@ -136,7 +137,10 @@ public class ESOperate {
 	 * @param beat        插件名称
 	 * @param type_module 插件数据模块名称
 	 * @param sortOrder   排序方法 SortOrder.DESC降序
-	 * @return 默认返回最新几条数据
+	 * @param type_name
+	 * @param from
+	 * @param size
+	 	 * @return 默认返回最新几条数据
 	 */
 	public List<String> RangeSearch(TransportClient client, String indexName, String hostname, String beat,
 			String type_module, String type_name, int from, int size, SortOrder sortOrder) {
@@ -146,6 +150,35 @@ public class ESOperate {
 				.setQuery(QueryBuilders.boolQuery()
 						.filter(QueryBuilders.termQuery(beat.toString() + ".module", type_module.toString()))
 						.filter(QueryBuilders.termQuery(beat.toString() + ".name", type_name.toString()))
+						.filter(QueryBuilders.termQuery("beat.hostname", hostname)))
+				.setFrom(from).setSize(size).addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hitsCount = hits.getHits();
+		if (hitsCount.length > 0) {
+			list = new ArrayList<String>();
+			for (int i = 0; i < hitsCount.length; i++) {
+				list.add(hitsCount[i].getSourceAsString());
+			}
+		}
+		return list;
+	}
+	
+	
+	/***
+	 * ES数据查询(indexName) 用于查询索引得数据
+	 * 
+	 * @param client      客户端
+	 * @param indexName   索引名字
+	 * @param hostname    主机名称
+	 * @param sortOrder   排序方法 SortOrder.DESC降序
+	 * @return 默认返回最新几条数据
+	 */
+	public List<String> RangeSearch(TransportClient client, String indexName, String hostname,
+			 int from, int size, SortOrder sortOrder) {
+		List<String> list = null;
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b
+				.setQuery(QueryBuilders.boolQuery()
 						.filter(QueryBuilders.termQuery("beat.hostname", hostname)))
 				.setFrom(from).setSize(size).addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
 		SearchHits hits = actionGet.getHits();
@@ -434,5 +467,5 @@ public class ESOperate {
 		return list;
 	}
 	// --------------------------------------------------------------------------------------
-
+	
 }

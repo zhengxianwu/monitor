@@ -135,6 +135,7 @@ public class GeneralController {
 	 * @param type             监控类型[Memory("运行内存"), Cpu("Cpu"),
 	 *                         Filesystem("磁盘");](TaskMonitorType)
 	 * @param threshold        阈值
+	 * @param taskName         任务名称
 	 * @param taskType         任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
 	 *                         Hour("小时"),Day("天"),
 	 *                         H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
@@ -152,6 +153,7 @@ public class GeneralController {
 	public String task(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "type", required = true) String type,
 			@RequestParam(value = "threshold", required = true) String threshold,
+			@RequestParam(value = "taskName", required = true) String taskName,
 			@RequestParam(value = "taskType", required = true) String taskType,
 			@RequestParam(value = "taskValue", required = true) String taskValue,
 			@RequestParam(value = "taskState", required = true) String taskState,
@@ -194,7 +196,6 @@ public class GeneralController {
 			}
 		}
 
-
 		// 运行状态
 		TaskStateType tst = null;
 		if (taskState.equals(TaskStateType.Run.toString())) {
@@ -202,8 +203,7 @@ public class GeneralController {
 		} else if (taskState.equals(TaskStateType.Stop.toString())) {
 			tst = TaskStateType.Stop;
 		}
-		
-		
+
 		// 操作符号
 		OperationType ot = null;
 		if (operationType.equals(OperationType.Gte.toString())) {
@@ -215,19 +215,19 @@ public class GeneralController {
 		} else if (operationType.equals(OperationType.Lt.toString())) {
 			ot = OperationType.Lt; // 小于
 		}
-		
-		//通知类型
-		ReminderType rt= null;
+
+		// 通知类型
+		ReminderType rt = null;
 		if (reminderType.equals(ReminderType.DingTalkRobot.toString())) {
 			rt = ReminderType.DingTalkRobot; // 大于等于
 		} else if (reminderType.equals(ReminderType.EMail.toString())) {
 			rt = ReminderType.EMail; // 大于等于
-		}  else if (reminderType.equals(ReminderType.SMS.toString())) {
+		} else if (reminderType.equals(ReminderType.SMS.toString())) {
 			rt = ReminderType.SMS; // 大于等于
-		} 
+		}
 
-		boolean addMap = std.add(hostname, tmt.toString(), threshold, taskId, stt.toString(), taskValue, tst.toString(),
-				ot.toString(), rt.toString(), reminderId, customExpression);
+		boolean addMap = std.add(hostname, tmt.toString(), threshold, taskName, taskId, stt.toString(), taskValue,
+				tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression);
 
 		// 启动任务
 		if (tst == TaskStateType.Run) {
@@ -241,17 +241,18 @@ public class GeneralController {
 	 * 更新定时任务
 	 * 
 	 * @author wuzhe
-	 * @param hostname      主机名称
-	 * @param type          监控类型TaskMonitorType : [Memory("运行内存"), Cpu("Cpu"),
-	 *                      Filesystem("磁盘");](TaskMonitorType)
-	 * @param threshold     阈值
-	 * @param taskType      任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
-	 *                      Hour("小时"),Day("天"), H_M_S("小时_分钟_秒");(ScheduleTaskType)
-	 *                      ]
-	 * @param taskId        任务Id
-	 * @param taskValue     任务时间值
-	 * @param taskState     任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
-	 * @param operationType 数值比较指令，传参{ Gte(大于等于) , Lte(小于等于) , Gt(大于) , Lt(小于)}
+	 * @param hostname         主机名称
+	 * @param type             监控类型TaskMonitorType : [Memory("运行内存"), Cpu("Cpu"),
+	 *                         Filesystem("磁盘");](TaskMonitorType)
+	 * @param threshold        阈值
+	 * @param taskName         任务名称
+	 * @param taskType         任务定时类型[ 传值(英文) ： Second("秒"), Minute("分钟"),
+	 *                         Hour("小时"),Day("天"),
+	 *                         H_M_S("小时_分钟_秒");(ScheduleTaskType) ]
+	 * @param taskId           任务Id
+	 * @param taskValue        任务时间值
+	 * @param taskState        任务状态[ 传值(英文) :(Run("运行"), Stop("暂停");)TaskStateType ]
+	 * @param operationType    数值比较指令，传参{ Gte(大于等于) , Lte(小于等于) , Gt(大于) , Lt(小于)}
 	 * @param reminderType     通知类型 ReminderType -> DingTalkRobot("钉钉机器人"),
 	 *                         EMail("邮件通知"),SMS("手机短信");
 	 * @param reminderId       通知Id ； 通过接口去获取
@@ -262,6 +263,7 @@ public class GeneralController {
 	public String task(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "type", required = true) String type,
 			@RequestParam(value = "threshold", required = true) String threshold,
+			@RequestParam(value = "taskName", required = true) String taskName,
 			@RequestParam(value = "taskType", required = true) String taskType,
 			@RequestParam(value = "taskId", required = true) String taskId,
 			@RequestParam(value = "taskValue", required = true) String taskValue,
@@ -293,7 +295,12 @@ public class GeneralController {
 			stt = ScheduleTaskType.Minute;
 			if (!TaskUtil.isInteger(taskValue))
 				return String.valueOf(false);
-		} else if (taskType.equals(ScheduleTaskType.Day.toString())) {
+		}else if (taskType.equals(ScheduleTaskType.Hour.toString())) {
+			stt = ScheduleTaskType.Hour;
+			if (!TaskUtil.isInteger(taskValue))
+				return String.valueOf(false);
+		} 
+		else if (taskType.equals(ScheduleTaskType.Day.toString())) {
 			stt = ScheduleTaskType.Day;
 			if (!TaskUtil.isInteger(taskValue))
 				return String.valueOf(false);
@@ -324,28 +331,28 @@ public class GeneralController {
 		} else if (taskState.equals(TaskStateType.Stop.toString())) {
 			tst = TaskStateType.Stop;
 		}
-		
-		//通知类型
-		ReminderType rt= null;
+
+		// 通知类型
+		ReminderType rt = null;
 		if (reminderType.equals(ReminderType.DingTalkRobot.toString())) {
-			rt = ReminderType.DingTalkRobot; // 
+			rt = ReminderType.DingTalkRobot; //
 		} else if (reminderType.equals(ReminderType.EMail.toString())) {
-			rt = ReminderType.EMail; // 
-		}  else if (reminderType.equals(ReminderType.SMS.toString())) {
-			rt = ReminderType.SMS; // 
-		} 
+			rt = ReminderType.EMail; //
+		} else if (reminderType.equals(ReminderType.SMS.toString())) {
+			rt = ReminderType.SMS; //
+		}
 
 		//// 新的与旧的都等于停止
 		if (oldSchedule.getTaskState().equals(TaskStateType.Stop.toString())
 				&& taskState.equals(TaskStateType.Stop.toString())) {
-			updateMap = std.updateMap(hostname, tmt.toString(), threshold, stt.toString(), taskValue, tst.toString(),
-					ot.toString(),rt.toString(),reminderId,customExpression, taskId);
-			
+			updateMap = std.updateMap(hostname, tmt.toString(), threshold, taskName, stt.toString(), taskValue,
+					tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression, taskId);
+
 		} else {
 			// 任务判断
 			// 更新
-			updateMap = std.updateMap(hostname, tmt.toString(), threshold, stt.toString(), taskValue, tst.toString(),
-					ot.toString(),rt.toString(),reminderId,customExpression, taskId);
+			updateMap = std.updateMap(hostname, tmt.toString(), threshold, taskName, stt.toString(), taskValue,
+					tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression, taskId);
 			if (updateMap) { // 更新成功执行
 				// 启动 -> 停止
 				if (oldSchedule.getTaskState().equals(TaskStateType.Run.toString())

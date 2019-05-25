@@ -55,7 +55,7 @@ public class SpringDynamicCronTask {
 			NailingRobotMapDb nailingRobotMapDb) {
 		super();
 		this.schedule = schedule;
-		this.cron = TaskUtil.formatCron(schedule.getTaskValue(), schedule.getTaskType());
+		this.cron = TaskUtil.formatCron(schedule.getTaskValue(), schedule.getTaskType());  //定时表达式
 		this.threadPoolTaskScheduler = threadPoolTaskScheduler;
 
 		this.dingtalk = dingtalk;
@@ -190,7 +190,8 @@ public class SpringDynamicCronTask {
 								break;
 							}
 						}
-
+						
+						//自定义表达式
 						String expression = CustomTemplateUtil.Expression(customExpression, schedule, list);
 						for (String s : list) {
 							System.out.println(s);

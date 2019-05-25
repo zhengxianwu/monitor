@@ -39,7 +39,7 @@ public class ScheduleTaskDb {
 			rs = db.select("select * from " + table);
 			while (rs.next()) {
 				list.add(new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
-						rs.getString("threshold"), rs.getString("taskId"), rs.getString("taskType"),
+						rs.getString("threshold"), rs.getString("taskName"),rs.getString("taskId"), rs.getString("taskType"),
 						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType"),
 						rs.getString("reminderType"), rs.getString("reminderId"), rs.getString("customExpression")));
 			}
@@ -58,17 +58,18 @@ public class ScheduleTaskDb {
 	 * @param hostname  主机名称
 	 * @param type      监控类型(ScheduleTaskType)
 	 * @param threshold 阈值
+	 * @param taskName  任务名称
 	 * @param taskId    定时任务Id
 	 * @param taskType  定时类型（秒，分钟，小时，天）(TaskStateType)
 	 * @param taskValue 任务时间值
 	 * @param taskState (Run("运行"), Stop("暂停");)TaskStateType
 	 * @return
 	 */
-	public boolean add(String hostname, String type, String threshold, String taskId, String taskType, String taskValue,
+	public boolean add(String hostname, String type, String threshold,String taskName,String taskId, String taskType, String taskValue,
 			String taskState, String operationType, String reminderType, String reminderId, String customExpression) {
 		String sql = String.format(
-				"insert into "+ table +"(hostname,type,threshold,taskId,taskType,taskValue,taskState,operationType,reminderType,reminderId,customExpression) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
-				hostname, type, threshold, taskId, taskType, taskValue, taskState, operationType, reminderType,
+				"insert into "+ table +"(hostname,type,threshold,taskName,taskId,taskType,taskValue,taskState,operationType,reminderType,reminderId,customExpression) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
+				hostname, type, threshold,taskName, taskId, taskType, taskValue, taskState, operationType, reminderType,
 				reminderId, customExpression);
 		return db.insert(sql);
 	}
@@ -79,21 +80,22 @@ public class ScheduleTaskDb {
 	 * @param hostname  主机名称
 	 * @param type      监控类型(TaskMonitorType)
 	 * @param threshold 阈值
+	 * @param taskName  任务名称
 	 * @param taskId    定时任务Id
 	 * @param taskType  定时类型（秒，分钟，小时，天）(ScheduleTaskType)
 	 * @param taskValue 任务时间值
 	 * @param taskState (Run("运行"), Stop("暂停");)TaskStateType
 	 * @return
 	 */
-	public boolean updateMap(String hostname, String type, String threshold, String taskType, String taskValue,
+	public boolean updateMap(String hostname, String type, String threshold, String taskName,String taskType, String taskValue,
 			String taskState, String operationType, String reminderType, String reminderId, String customExpression,
 			String taskId) {
 		String sql = String.format(
-				"update schedule set  " + " hostname  = '%s'," + " type  = '%s'," + " threshold  = '%s',"
+				"update schedule set  " + " taskName  = '%s'," + " hostname  = '%s'," + " type  = '%s'," + " threshold  = '%s',"
 						+ " taskType  = '%s'," + " taskValue  = '%s'," + " taskState  = '%s',"
 						+ " operationType  = '%s'," + " reminderType  = '%s'," + " reminderId  = '%s',"
 						+ " customExpression  = '%s'" + " where   taskId  = '%s'",
-				hostname, type, threshold, taskType, taskValue, taskState, operationType, reminderType, reminderId,
+						taskName,hostname, type, threshold, taskType, taskValue, taskState, operationType, reminderType, reminderId,
 				customExpression, taskId);
 		System.out.println(sql);
 		return db.update(sql);

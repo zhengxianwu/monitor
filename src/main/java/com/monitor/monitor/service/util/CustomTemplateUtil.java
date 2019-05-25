@@ -14,7 +14,7 @@ public class CustomTemplateUtil {
 
 	public static String Expression(String customExpression, Schedule schedule, List<String> matchingList) {
 
-		String str = "";
+		String str = ""; //超过记录数据
 		for (String b : matchingList) {
 			str += b + " ; ";
 		}
