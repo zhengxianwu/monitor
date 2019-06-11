@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.monitor.monitor.been.HostnameMap;
 import com.monitor.monitor.been.Schedule;
+import com.monitor.monitor.service.util.MyMD5;
 import com.mysql.jdbc.Statement;
 
 @SpringBootTest
@@ -39,11 +40,12 @@ public class DatabasesTest {
 //		}
 		
 //		boolean addMap = amd.updateMap("yunwei_server", "39.108.227.22", 6, "heihei", "123");
+		String hostname = "linux-129";
+		String address = "192.169.20.129";
+		String hostId = MyMD5.Md5(address);
+		String remark = "remark";
+		boolean addMap = amd.addMap(hostId, hostname, address, remark);
 		
-		
-//		amd.addMap("linux-129", "192.169.20.129");
-		
-		amd.deleteMap(12, "linux-129", "192.169.20.129");
 	}
 
 	

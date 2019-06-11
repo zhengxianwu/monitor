@@ -52,7 +52,7 @@ public class GeneralController {
 	 * @return 返回Json数组形式的所有映射数据
 	 */
 	@RequestMapping(value = "/hostmap/All", method = RequestMethod.GET)
-	public String hostmap() {
+	public String getHostmap() {
 		List<HostnameMap> all = amd.getAll();
 		return JSONArray.fromObject(all).toString();
 	}
@@ -66,9 +66,11 @@ public class GeneralController {
 	 * @return true为添加成功，false添加失败，失败可能是（Hostname或address已经存在）
 	 */
 	@RequestMapping(value = "/hostmap/add", method = RequestMethod.POST)
-	public String hostmap(@RequestParam(value = "hostname", required = true) String hostname,
+	public String addHostmap(@RequestParam(value = "hostname", required = true) String hostname,
+			@RequestParam(value = "remark", required = false) String remark,
 			@RequestParam(value = "address", required = true) String address) {
-		boolean addMap = amd.addMap(hostname, address);
+		String hostId = MyMD5.Md5(address);
+		boolean addMap = amd.addMap(hostId, hostname, address, remark);
 		return String.valueOf(addMap);
 	}
 
@@ -84,14 +86,13 @@ public class GeneralController {
 	 * @return true为更新成功，false更新失败，失败可能是参数有误
 	 */
 	@RequestMapping(value = "/hostmap/update", method = RequestMethod.POST)
-	public String hostmap(@RequestParam(value = "hostname", required = true) String hostname,
+	public String updateHostmap(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "address", required = true) String address,
-			@RequestParam(value = "id", required = true) String id,
-			@RequestParam(value = "old_hostname", required = true) String old_hostname,
-			@RequestParam(value = "old_address", required = true) String old_address
+			@RequestParam(value = "remark", required = true) String remark,
+			@RequestParam(value = "hostId", required = true) String hostId
 
 	) {
-		boolean updateMap = amd.updateMap(hostname, address, Integer.parseInt(id), old_hostname, old_address);
+		boolean updateMap = amd.updateMap(hostname, address, remark, hostId);
 		return String.valueOf(updateMap);
 	}
 
@@ -105,12 +106,8 @@ public class GeneralController {
 	 * @return true为删除成功，false删除失败，失败可能是参数有误
 	 */
 	@RequestMapping(value = "/hostmap/delete", method = RequestMethod.POST)
-	public String hostmap(@RequestParam(value = "id", required = true) String id,
-			@RequestParam(value = "hostname", required = true) String hostname,
-			@RequestParam(value = "address", required = true) String address
-
-	) {
-		boolean deleteMap = amd.deleteMap(Integer.parseInt(id), hostname, address);
+	public String DelHostmap(@RequestParam(value = "hostId", required = true) String hostId) {
+		boolean deleteMap = amd.deleteMap(hostId);
 		return String.valueOf(deleteMap);
 	}
 
@@ -122,7 +119,7 @@ public class GeneralController {
 	 * @return 返回Json数组形式的所有映射数据
 	 */
 	@RequestMapping(value = "/task/All", method = RequestMethod.GET)
-	public String task() {
+	public String GetTask() {
 		List<Schedule> all = std.getAll();
 		return JSONArray.fromObject(all).toString();
 	}
@@ -150,7 +147,7 @@ public class GeneralController {
 	 * @return true为添加成功，false添加失败，
 	 */
 	@RequestMapping(value = "/task/add", method = RequestMethod.POST)
-	public String task(@RequestParam(value = "hostname", required = true) String hostname,
+	public String AddTask(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "type", required = true) String type,
 			@RequestParam(value = "threshold", required = true) String threshold,
 			@RequestParam(value = "taskName", required = true) String taskName,
@@ -260,7 +257,7 @@ public class GeneralController {
 	 * @return true为添加成功，false添加失败，
 	 */
 	@RequestMapping(value = "/task/update", method = RequestMethod.POST)
-	public String task(@RequestParam(value = "hostname", required = true) String hostname,
+	public String updateTask(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "type", required = true) String type,
 			@RequestParam(value = "threshold", required = true) String threshold,
 			@RequestParam(value = "taskName", required = true) String taskName,
@@ -295,12 +292,11 @@ public class GeneralController {
 			stt = ScheduleTaskType.Minute;
 			if (!TaskUtil.isInteger(taskValue))
 				return String.valueOf(false);
-		}else if (taskType.equals(ScheduleTaskType.Hour.toString())) {
+		} else if (taskType.equals(ScheduleTaskType.Hour.toString())) {
 			stt = ScheduleTaskType.Hour;
 			if (!TaskUtil.isInteger(taskValue))
 				return String.valueOf(false);
-		} 
-		else if (taskType.equals(ScheduleTaskType.Day.toString())) {
+		} else if (taskType.equals(ScheduleTaskType.Day.toString())) {
 			stt = ScheduleTaskType.Day;
 			if (!TaskUtil.isInteger(taskValue))
 				return String.valueOf(false);
@@ -387,7 +383,7 @@ public class GeneralController {
 	 * @return true为删除成功，false删除失败，
 	 */
 	@RequestMapping(value = "/task/delete", method = RequestMethod.POST)
-	public String task(@RequestParam(value = "taskId", required = true) String taskId) {
+	public String DelTask(@RequestParam(value = "taskId", required = true) String taskId) {
 		boolean deleteMap = std.deleteMap(taskId);
 		taskManage.removeTask(taskId);
 		return String.valueOf(deleteMap);
@@ -402,7 +398,7 @@ public class GeneralController {
 	 * @return 返回Json数组形式的所有映射数据
 	 */
 	@RequestMapping(value = "/DingTalk/All", method = RequestMethod.GET)
-	public String talk() {
+	public String getTalk() {
 		List<NailingRobotMap> all = nrm.getAll();
 		return JSONArray.fromObject(all).toString();
 	}
@@ -415,7 +411,7 @@ public class GeneralController {
 	 * @return true为添加成功，false添加失败
 	 */
 	@RequestMapping(value = "/DingTalk/add", method = RequestMethod.POST)
-	public String talk(@RequestParam(value = "rootName", required = true) String rootName,
+	public String AddTalk(@RequestParam(value = "rootName", required = true) String rootName,
 			@RequestParam(value = "rootToken", required = true) String rootToken) {
 		String rootId = MyMD5.Md5(rootToken);
 		boolean addMap = nrm.addMap(rootId, rootName, rootToken);
@@ -430,7 +426,7 @@ public class GeneralController {
 	 * @return true为添加成功，false添加失败
 	 */
 	@RequestMapping(value = "/DingTalk/update", method = RequestMethod.POST)
-	public String talk(@RequestParam(value = "rootId", required = true) String rootId,
+	public String updateTalk(@RequestParam(value = "rootId", required = true) String rootId,
 			@RequestParam(value = "rootName", required = true) String rootName,
 			@RequestParam(value = "rootToken", required = true) String rootToken) {
 		boolean addMap = nrm.updateMap(rootName, rootToken, rootId);
@@ -444,7 +440,7 @@ public class GeneralController {
 	 * @return true为添加成功，false添加失败
 	 */
 	@RequestMapping(value = "/DingTalk/delete", method = RequestMethod.POST)
-	public String talk(@RequestParam(value = "rootId", required = true) String rootId) {
+	public String DelTalk(@RequestParam(value = "rootId", required = true) String rootId) {
 		boolean addMap = nrm.deleteMap(rootId);
 		return String.valueOf(addMap);
 	}

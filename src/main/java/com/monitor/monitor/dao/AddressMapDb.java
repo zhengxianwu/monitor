@@ -19,22 +19,23 @@ import com.mysql.jdbc.Statement;
 @Singleton
 public class AddressMapDb {
 
-	
 	@Autowired
 	private Databases db;
-	
+
 	/**
 	 * 获取全部映射
+	 * 
 	 * @return
 	 */
-	public List<HostnameMap> getAll(){
+	public List<HostnameMap> getAll() {
 		List<HostnameMap> list = new ArrayList<>();
-		
+
 		ResultSet rs;
 		try {
 			rs = db.select("select * from hostname_map");
-			while(rs.next()) {
-				list.add(new HostnameMap(rs.getInt("id"),  rs.getString("hostname"),  rs.getString("address")));
+			while (rs.next()) {
+				list.add(new HostnameMap(rs.getInt("id"), rs.getString("hostname"), rs.getString("address"),
+						rs.getString("remark"), rs.getString("hostId")));
 			}
 			rs.close();
 			db.close_connection();
@@ -44,43 +45,51 @@ public class AddressMapDb {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 添加主机-ip映射
+	 * @param hostId
 	 * @param hostname
 	 * @param address
+	 * @param remark
 	 * @return
 	 */
-	public boolean addMap(String hostname,String address) {
-		String sql = String.format("insert into hostname_map(hostname,address) values('%s','%s')", hostname,address);
+	public boolean addMap(String hostId, String hostname, String address, String remark) {
+		String sql = String.format("insert into hostname_map(hostId,hostname,address,remark) values('%s','%s','%s','%s')",
+				hostId, hostname, address, remark);
 		return db.insert(sql);
 	}
-	
+
+	/**
+	 * 
 	/**
 	 * 更新映射
-	 * @param hostname 新主机名
-	 * @param address 新ip地址
-	 * @param id id
-	 * @param old_hostname  旧主机名
-	 * @param old_address  旧ip地址
+	 * 
+	 * @param hostname     新主机名
+	 * @param address      新ip地址
+	 * @param remark       新备注
+	 * @param hostId       唯一标识
 	 * @return
 	 */
-	public boolean updateMap(String hostname,String address,int id,String old_hostname,String old_address) {
-		String sql = String.format("update hostname_map set  hostname = '%s' ,  address = '%s' where id=%d and hostname = '%s' and address = '%s' ", hostname,address,id,old_hostname,old_address);
+	public boolean updateMap(String hostname, String address, String remark, String hostId) {
+		String sql = String.format(
+				"update hostname_map set  hostname = '%s' ,  address = '%s' ,remark = '%s' where hostId = '%s'",
+				hostname, address, remark, hostId);
 		System.out.println(sql);
 		return db.update(sql);
 	}
-	
+
 	/**
 	 * 删除映射
+	 * 
 	 * @param id
 	 * @param hostname
 	 * @param address
 	 * @return
 	 */
-	public boolean deleteMap(int id,String hostname,String address) {
-		String sql = String.format("delete from hostname_map where id=%d and hostname = '%s' and address = '%s'",id,hostname,address);
+	public boolean deleteMap(String hostId) {
+		String sql = String.format("delete from hostname_map where hostId = '%s'", hostId);
 		return db.delete(sql);
 	}
-	
+
 }

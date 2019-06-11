@@ -4,11 +4,15 @@ public class HostnameMap {
 	private int id;
 	private String hostname; //主机名
 	private String address; //ip地址
-	public HostnameMap(int id, String hostname, String address) {
+	private String remark;//备注
+	private String hostId;//唯一标识
+	public HostnameMap(int id, String hostname, String address, String remark, String hostId) {
 		super();
 		this.id = id;
 		this.hostname = hostname;
 		this.address = address;
+		this.remark = remark;
+		this.hostId = hostId;
 	}
 	public int getId() {
 		return id;
@@ -28,10 +32,26 @@ public class HostnameMap {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getHostId() {
+		return hostId;
+	}
+	public void setHostId(String hostId) {
+		this.hostId = hostId;
+	}
 	@Override
 	public String toString() {
-		return "HostnameMap [id=" + id + ", hostname=" + hostname + ", address=" + address + "]";
+		return "HostnameMap [id=" + id + ", hostname=" + hostname + ", address=" + address + ", remark=" + remark
+				+ ", hostId=" + hostId + "]";
 	}
+
+	
+
 	
 	
 }
