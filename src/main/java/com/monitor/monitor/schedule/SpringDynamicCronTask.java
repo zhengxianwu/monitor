@@ -14,8 +14,8 @@ import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
-import com.monitor.monitor.been.NailingRobotMapBean;
-import com.monitor.monitor.been.ScheduleBean;
+import com.monitor.monitor.been.NailingRobotMap;
+import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.dao.NailingRobotMapDb;
 import com.monitor.monitor.es.Beat;
 import com.monitor.monitor.es.ESClient;
@@ -45,12 +45,12 @@ public class SpringDynamicCronTask {
 	private ESClient esClient;
 
 	private String cron;
-	private ScheduleBean schedule;
+	private Schedule schedule;
 	ScheduledFuture<?> scheduledFuture = null;
 	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 	private NailingRobotMapDb nailingRobotMapDb;
 
-	public SpringDynamicCronTask(ScheduleBean schedule, ThreadPoolTaskScheduler threadPoolTaskScheduler,
+	public SpringDynamicCronTask(Schedule schedule, ThreadPoolTaskScheduler threadPoolTaskScheduler,
 			DingtalkRobotUtil dingtalk, ESOperate esOperate, String metric_version, ESClient esClient,
 			NailingRobotMapDb nailingRobotMapDb) {
 		super();
@@ -205,7 +205,7 @@ public class SpringDynamicCronTask {
 							switch (rt) {
 							case DingTalkRobot:
 								// 获取token,根据Id
-								NailingRobotMapBean nailingRobotMap = nailingRobotMapDb.getNailingRobotMap(reminderId);
+								NailingRobotMap nailingRobotMap = nailingRobotMapDb.getNailingRobotMap(reminderId);
 								messageText = dingtalk.messageText(expression, null, false, nailingRobotMap.getRootToken());
 								System.out.println(schedule);
 								break;
@@ -242,7 +242,7 @@ public class SpringDynamicCronTask {
 		}
 	}
 
-	public ScheduleBean getSchedule() {
+	public Schedule getSchedule() {
 		return this.schedule;
 	}
 

@@ -15,8 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.monitor.monitor.been.HostnameMapBean;
-import com.monitor.monitor.been.ScheduleBean;
+import com.monitor.monitor.been.HostnameMap;
+import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.service.util.MyMD5;
 import com.mysql.jdbc.Statement;
 

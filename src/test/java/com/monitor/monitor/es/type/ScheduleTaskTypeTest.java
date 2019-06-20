@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.monitor.monitor.been.ScheduleBean;
+import com.monitor.monitor.been.Schedule;
 import com.monitor.monitor.controller.FilebeatControllerTest;
 import com.monitor.monitor.dao.AddressMapDb;
 import com.monitor.monitor.dao.Databases;
@@ -30,8 +30,8 @@ public class ScheduleTaskTypeTest {
 
 	@Test
 	public void alltest() {
-		List<ScheduleBean> all = std.getAll();
-		for (ScheduleBean s : all) {
+		List<Schedule> all = std.getAll();
+		for (Schedule s : all) {
 			logger.debug(s.toString());
 			System.out.println(s);
 		}

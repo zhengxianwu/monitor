@@ -10,9 +10,9 @@ import org.elasticsearch.common.inject.Singleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.monitor.monitor.been.NailingRobotMapBean;
-import com.monitor.monitor.been.ScheduleBean;
-import com.monitor.monitor.been.NailingRobotMapBean;
+import com.monitor.monitor.been.NailingRobotMap;
+import com.monitor.monitor.been.Schedule;
+import com.monitor.monitor.been.NailingRobotMap;
 import com.mysql.jdbc.Statement;
 
 @Repository
@@ -29,14 +29,14 @@ public class NailingRobotMapDb {
 	 * 
 	 * @return
 	 */
-	public List<NailingRobotMapBean> getAll() {
-		List<NailingRobotMapBean> list = new ArrayList<>();
+	public List<NailingRobotMap> getAll() {
+		List<NailingRobotMap> list = new ArrayList<>();
 
 		ResultSet rs;
 		try {
 			rs = db.select("select * from " + table);
 			while (rs.next()) {
-				list.add(new NailingRobotMapBean(rs.getInt("Id"), rs.getString("rootId"), rs.getString("rootName"),
+				list.add(new NailingRobotMap(rs.getInt("Id"), rs.getString("rootId"), rs.getString("rootName"),
 						rs.getString("rootToken")));
 			}
 			rs.close();
@@ -94,14 +94,14 @@ public class NailingRobotMapDb {
 	 * @param rootId 机器人Id
 	 * @return
 	 */
-	public NailingRobotMapBean getNailingRobotMap(String rootId) {
+	public NailingRobotMap getNailingRobotMap(String rootId) {
 		ResultSet rs;
-		NailingRobotMapBean nailingRobotMap =null;
+		NailingRobotMap nailingRobotMap =null;
 		try {
 
 			rs = db.select(String.format("select * from " + table + " where rootId = '%s'", rootId));
 			while (rs.next()) {
-				 nailingRobotMap = new NailingRobotMapBean(rs.getInt("Id"), rs.getString("rootId"), rs.getString("rootName"),
+				 nailingRobotMap = new NailingRobotMap(rs.getInt("Id"), rs.getString("rootId"), rs.getString("rootName"),
 						rs.getString("rootToken"));
 			}
 			rs.close();
