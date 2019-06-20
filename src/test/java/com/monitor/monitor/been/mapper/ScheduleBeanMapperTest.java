@@ -21,7 +21,7 @@ import com.monitor.monitor.service.util.MyMD5;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc // 注入MockMvc
-public class NailingRobotMapBeanMapperTest {
+public class ScheduleBeanMapperTest {
 	@Autowired
 	private DbTools tool;
 
@@ -31,23 +31,14 @@ public class NailingRobotMapBeanMapperTest {
 		SqlSession sqlSeesion = tool.getSqlSeesion();
 		System.out.println(sqlSeesion);
 
-		NailingRobotMapBeanMapper mapper = sqlSeesion.getMapper(NailingRobotMapBeanMapper.class);
-
-		String hostId = MyMD5.Md5("127.0.0.1");
-//		boolean insertHostname = mapper.insertHostname(new HostnameMapBean("test", "127.0.0.1", "测试", hostId));
-
-//		mapper.deleteHostname(hostId);
-
-		List<NailingRobotMapBean> all = mapper.getAll();
-
-		for (NailingRobotMapBean u : all) {
-			System.out.println(u);
+		ScheduleBeanMapper mapper = sqlSeesion.getMapper(ScheduleBeanMapper.class);
+		List<ScheduleBean> all = mapper.getAll();
+		for(ScheduleBean s : all) {
+			System.out.println(s);
 		}
 		
+		//添加
 		
 		
-//		ScheduleBeanMapper mapper2 = sqlSeesion.getMapper(ScheduleBeanMapper.class);
-//		List<ScheduleBean> all2 = mapper2.getAll();
-//		System.out.println(all2);
 	}
 }

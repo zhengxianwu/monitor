@@ -38,10 +38,10 @@ public class ScheduleTaskDb {
 		try {
 			rs = db.select("select * from " + table);
 			while (rs.next()) {
-				list.add(new ScheduleBean(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
-						rs.getString("threshold"), rs.getString("taskName"),rs.getString("taskId"), rs.getString("taskType"),
-						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType"),
-						rs.getString("reminderType"), rs.getString("reminderId"), rs.getString("customExpression")));
+//				list.add(new ScheduleBean(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
+//						rs.getString("threshold"), rs.getString("taskName"),rs.getString("taskId"), rs.getString("taskType"),
+//						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType"),
+//						rs.getString("reminderType"), rs.getString("reminderId"), rs.getString("customExpression")));
 			}
 			rs.close();
 			db.close_connection();

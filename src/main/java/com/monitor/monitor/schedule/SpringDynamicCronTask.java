@@ -33,6 +33,13 @@ import com.monitor.monitor.service.util.TaskUtil;
 
 import net.sf.json.JSONObject;
 
+
+/**
+ * 任务执行对象
+ * @author wuzhe
+ *
+ */
+
 //@Lazy(false)
 //@Component
 //@EnableScheduling

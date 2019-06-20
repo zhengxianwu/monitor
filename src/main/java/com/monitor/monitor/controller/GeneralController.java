@@ -15,6 +15,7 @@ import com.monitor.monitor.been.NailingRobotMapBean;
 import com.monitor.monitor.been.ScheduleBean;
 import com.monitor.monitor.been.mapper.HostnameMapBeanMapper;
 import com.monitor.monitor.been.mapper.NailingRobotMapBeanMapper;
+import com.monitor.monitor.been.mapper.ScheduleBeanMapper;
 import com.monitor.monitor.dao.AddressMapDb;
 import com.monitor.monitor.dao.DbTools;
 import com.monitor.monitor.dao.NailingRobotMapDb;
@@ -125,7 +126,8 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/task/All", method = RequestMethod.GET)
 	public String GetTask() {
-		List<ScheduleBean> all = std.getAll();
+		List<ScheduleBean> all = dbTool.getSqlSeesion().getMapper(ScheduleBeanMapper.class).getAll();
+//		List<ScheduleBean> all = std.getAll();
 		return JSONArray.fromObject(all).toString();
 	}
 
@@ -228,15 +230,20 @@ public class GeneralController {
 			rt = ReminderType.SMS; // 大于等于
 		}
 
-		boolean addMap = std.add(hostname, tmt.toString(), threshold, taskName, taskId, stt.toString(), taskValue,
-				tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression);
+		ScheduleBean scheduleBean = new ScheduleBean(hostname, tmt.toString(), threshold, taskName, taskId,
+				stt.toString(), taskValue, tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression);
+		boolean insertScheduleBean = dbTool.getSqlSeesion().getMapper(ScheduleBeanMapper.class).insertScheduleBean(scheduleBean);
+		
+		
+//		boolean addMap = std.add(hostname, tmt.toString(), threshold, taskName, taskId, stt.toString(), taskValue,
+//				tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression);
 
 		// 启动任务
 		if (tst == TaskStateType.Run) {
 			taskManage.addTask(std.getTaskId(taskId));
 		}
 
-		return String.valueOf(addMap);
+		return String.valueOf(insertScheduleBean);
 	}
 
 	/**
@@ -346,14 +353,22 @@ public class GeneralController {
 		//// 新的与旧的都等于停止
 		if (oldSchedule.getTaskState().equals(TaskStateType.Stop.toString())
 				&& taskState.equals(TaskStateType.Stop.toString())) {
-			updateMap = std.updateMap(hostname, tmt.toString(), threshold, taskName, stt.toString(), taskValue,
-					tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression, taskId);
+			
+			ScheduleBean scheduleBean = new ScheduleBean(hostname, tmt.toString(), threshold, taskName, taskId,
+					stt.toString(), taskValue, tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression);
+			updateMap = dbTool.getSqlSeesion().getMapper(ScheduleBeanMapper.class).updateScheduleBean(scheduleBean);
+			
+//			updateMap = std.updateMap(hostname, tmt.toString(), threshold, taskName, stt.toString(), taskValue,
+//					tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression, taskId);
 
 		} else {
 			// 任务判断
 			// 更新
-			updateMap = std.updateMap(hostname, tmt.toString(), threshold, taskName, stt.toString(), taskValue,
-					tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression, taskId);
+			ScheduleBean scheduleBean = new ScheduleBean(hostname, tmt.toString(), threshold, taskName, taskId,
+					stt.toString(), taskValue, tst.toString(), ot.toString(), rt.toString(), reminderId, customExpression);
+			updateMap = dbTool.getSqlSeesion().getMapper(ScheduleBeanMapper.class).updateScheduleBean(scheduleBean);
+			
+			
 			if (updateMap) { // 更新成功执行
 				// 启动 -> 停止
 				if (oldSchedule.getTaskState().equals(TaskStateType.Run.toString())
@@ -389,8 +404,11 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/task/delete", method = RequestMethod.POST)
 	public String DelTask(@RequestParam(value = "taskId", required = true) String taskId) {
-		boolean deleteMap = std.deleteMap(taskId);
+		boolean deleteMap = dbTool.getSqlSeesion().getMapper(ScheduleBeanMapper.class).deleteScheduleBean(taskId);
+		
+//		boolean deleteMap = std.deleteMap(taskId);
 		taskManage.removeTask(taskId);
+		
 		return String.valueOf(deleteMap);
 	}
 

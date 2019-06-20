@@ -17,13 +17,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.monitor.monitor.been.ScheduleBean;
-import com.monitor.monitor.been.TaskBean;
 import com.monitor.monitor.dao.NailingRobotMapDb;
 import com.monitor.monitor.dao.ScheduleTaskDb;
 import com.monitor.monitor.es.ESClient;
 import com.monitor.monitor.es.ESOperate;
-import com.monitor.monitor.es.type.TaskStateType;
 import com.monitor.monitor.reminder.DingtalkRobotUtil;
+
+/**
+ * 任务管理器
+ * @author wuzhe
+ *
+ */
 
 @Service
 @Singleton
