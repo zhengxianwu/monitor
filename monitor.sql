@@ -1,5 +1,5 @@
 ﻿# Host: localhost  (Version: 5.5.53)
-# Date: 2019-06-11 17:20:50
+# Date: 2019-06-20 17:30:01
 # Generator: MySQL-Front 5.3  (Build 4.234)
 
 /*!40101 SET NAMES utf8 */;
@@ -17,13 +17,13 @@ CREATE TABLE `hostname_map` (
   PRIMARY KEY (`Id`),
   UNIQUE KEY `address` (`address`),
   UNIQUE KEY `hostname` (`hostname`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
 #
 # Data for table "hostname_map"
 #
 
-INSERT INTO `hostname_map` VALUES (19,'yunwei_server2','39.108.227.22','服务器','748209c9634b6d9de40e5863b24dbb47'),(22,'zhengxian','localhost','本机\n','c9af2aafbf82d13673989d0fc83ae448');
+INSERT INTO `hostname_map` VALUES (19,'yunwei_server','39.108.227.22','服务器','748209c9634b6d9de40e5863b24dbb47'),(22,'zhengxian','localhost','本机\n','c9af2aafbf82d13673989d0fc83ae448');
 
 #
 # Structure for table "nailing_robot"
@@ -63,10 +63,10 @@ CREATE TABLE `schedule` (
   `customExpression` varchar(255) DEFAULT NULL COMMENT '自定义通知表达式，空则默认',
   PRIMARY KEY (`Id`),
   UNIQUE KEY `taskId` (`taskId`)
-) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=47 DEFAULT CHARSET=utf8;
 
 #
 # Data for table "schedule"
 #
 
-INSERT INTO `schedule` VALUES (38,'zhengxian','Cpu','60','274d0d8ee61aef85d8838ac035788c21','任务名称测试1','Hour','10','Stop','Gte','DingTalkRobot','5ecef153b23c439d2c629d78e4d10ff8','{主机名称}'),(39,'zhengxian','Memory','43','d46142c6e138052fbd4311549c219aa9','内存定时任务','Second','60','Stop','Gte','DingTalkRobot','5ecef153b23c439d2c629d78e4d10ff8','主机名称 ： {主机名称}\n监控类型 ：{监控类型}\n超过阈值数量 :{超过阈值数量}\n超过记录数据 ：{超过记录数据}'),(41,'zhengxian','Cpu','98','dd9de33d15fba516846d065aae5f33f5','钉钉测试发送','Second','60','Stop','Lte','DingTalkRobot','5ecef153b23c439d2c629d78e4d10ff8','前端测试：\n主机名称 ： {主机名称}\n监控类型 ：{监控类型}\n超过阈值数量 :{超过阈值数量}\n超过记录数据 ：{超过记录数据}');
+INSERT INTO `schedule` VALUES (39,'zhengxian','Memory','43','d46142c6e138052fbd4311549c219aa9','内存定时任务','Second','60','Stop','Gte','DingTalkRobot','5ecef153b23c439d2c629d78e4d10ff8','主机名称 ： {主机名称}\n监控类型 ：{监控类型}\n超过阈值数量 :{超过阈值数量}\n超过记录数据 ：{超过记录数据}'),(41,'zhengxian','Cpu','98','dd9de33d15fba516846d065aae5f33f5','钉钉测试发送','Second','60','Stop','Lte','DingTalkRobot','5ecef153b23c439d2c629d78e4d10ff8','前端测试：\n主机名称 ： {主机名称}\n监控类型 ：{监控类型}\n超过阈值数量 :{超过阈值数量}\n超过记录数据 ：{超过记录数据}');
