@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.monitor.monitor.been.HostnameMapBean;
 import com.monitor.monitor.been.NailingRobotMapBean;
 import com.monitor.monitor.been.ScheduleBean;
+import com.monitor.monitor.been.mapper.HostnameMapBeanMapper;
 import com.monitor.monitor.dao.AddressMapDb;
+import com.monitor.monitor.dao.DbTools;
 import com.monitor.monitor.dao.NailingRobotMapDb;
 import com.monitor.monitor.dao.ScheduleTaskDb;
 import com.monitor.monitor.es.type.OperationType;
@@ -32,19 +34,18 @@ import net.sf.json.JSONArray;
 public class GeneralController {
 
 	@Autowired
-	private AddressMapDb amd;
-
-	@Autowired
 	private ScheduleTaskDb std;
 
 	@Autowired
 	private NailingRobotMapDb nrm;
 
 	@Autowired
-	private TaskManagement taskManage;
+	private TaskManagement taskManage; // 定时任务
+
+	@Autowired
+	private DbTools dbTool; // MyBatis对象
 
 	// --------------------------------------主机映射--------------------------------------
-
 	/**
 	 * 获取所有映射
 	 * 
@@ -53,7 +54,7 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/hostmap/All", method = RequestMethod.GET)
 	public String getHostmap() {
-		List<HostnameMapBean> all = amd.getAll();
+		List<HostnameMapBean> all = dbTool.getSqlSeesion().getMapper(HostnameMapBeanMapper.class).getAll();
 		return JSONArray.fromObject(all).toString();
 	}
 
@@ -69,9 +70,11 @@ public class GeneralController {
 	public String addHostmap(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "remark", required = false) String remark,
 			@RequestParam(value = "address", required = true) String address) {
+
 		String hostId = MyMD5.Md5(address);
-		boolean addMap = amd.addMap(hostId, hostname, address, remark);
-		return String.valueOf(addMap);
+		boolean insertHostname = dbTool.getSqlSeesion().getMapper(HostnameMapBeanMapper.class)
+				.insertHostname(new HostnameMapBean(hostname, address, remark, hostId));
+		return String.valueOf(insertHostname);
 	}
 
 	/**
@@ -92,8 +95,9 @@ public class GeneralController {
 			@RequestParam(value = "hostId", required = true) String hostId
 
 	) {
-		boolean updateMap = amd.updateMap(hostname, address, remark, hostId);
-		return String.valueOf(updateMap);
+		boolean updateHostname = dbTool.getSqlSeesion().getMapper(HostnameMapBeanMapper.class)
+				.updateHostname(new HostnameMapBean(hostname, address, remark, hostId));
+		return String.valueOf(updateHostname);
 	}
 
 	/**
@@ -107,10 +111,12 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/hostmap/delete", method = RequestMethod.POST)
 	public String DelHostmap(@RequestParam(value = "hostId", required = true) String hostId) {
-		boolean deleteMap = amd.deleteMap(hostId);
+		boolean deleteMap =  dbTool.getSqlSeesion().getMapper(HostnameMapBeanMapper.class).deleteHostname(hostId);
 		return String.valueOf(deleteMap);
 	}
 
+	
+	
 	// --------------------------------------定时任务--------------------------------------
 	/**
 	 * 获取定时任务

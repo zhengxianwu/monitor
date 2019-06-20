@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.monitor.monitor.been.mapper.HostnameMapBeanMapper">
+	<select id="getAll" resultType="HostnameMapBean">
+		select * from hostname_map
+	</select>
+
+	<insert id="insertHostname" parameterType="HostnameMapBean">
+		insert into
+		hostname_map(hostname,address,remark,hostId)
+		values
+		(#{hostname},#{address},#{remark},#{hostId})
+	</insert>
+
+
+	<update id="updateHostname" parameterType="HostnameMapBean">
+		update hostname_map
+		set
+		hostname = #{hostname},
+		address = #{address},
+		remark = #{remark}
+		where hostId = #{hostId}
+	</update>
+	
+	
+	<delete id="deleteHostname" parameterType="java.lang.String">
+		delete from hostname_map where hostId = #{hostId}
+	</delete>
+
+</mapper>
