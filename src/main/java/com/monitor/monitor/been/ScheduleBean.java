@@ -2,7 +2,7 @@ package com.monitor.monitor.been;
 
 import com.monitor.monitor.es.type.OperationType;
 
-public class Schedule {
+public class ScheduleBean {
 	private String Id;
 	private String hostname;// 主机名字
 	private String type; // 监控类型TaskMonitorType
@@ -35,7 +35,7 @@ public class Schedule {
 	 * @param reminderId
 	 * @param customExpression
 	 */
-	public Schedule(String id, String hostname, String type, String threshold, String taskName, String taskId,
+	public ScheduleBean(String id, String hostname, String type, String threshold, String taskName, String taskId,
 			String taskType, String taskValue, String taskState, String operationType, String reminderType,
 			String reminderId, String customExpression) {
 		super();
@@ -54,7 +54,7 @@ public class Schedule {
 		this.customExpression = customExpression;
 	}
 
-	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
+	public ScheduleBean(String id, String hostname, String type, String threshold, String taskId, String taskType,
 			String taskValue, String taskState, String operationType) {
 		super();
 		Id = id;
@@ -68,7 +68,7 @@ public class Schedule {
 		this.operationType = operationType;
 	}
 
-	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
+	public ScheduleBean(String id, String hostname, String type, String threshold, String taskId, String taskType,
 			String taskValue, String taskState, String operationType, String reminderType, String reminderId) {
 		super();
 		Id = id;
@@ -94,7 +94,7 @@ public class Schedule {
 		this.taskName = taskName;
 	}
 
-	public Schedule(String id, String hostname, String type, String threshold, String taskId, String taskType,
+	public ScheduleBean(String id, String hostname, String type, String threshold, String taskId, String taskType,
 			String taskValue, String taskState, String operationType, String reminderType, String reminderId,
 			String customExpression) {
 		super();
@@ -120,7 +120,7 @@ public class Schedule {
 		this.customExpression = customExpression;
 	}
 
-	public Schedule() {
+	public ScheduleBean() {
 		super();
 	}
 

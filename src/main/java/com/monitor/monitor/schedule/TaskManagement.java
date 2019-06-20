@@ -16,8 +16,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.monitor.monitor.been.Schedule;
-import com.monitor.monitor.been.Task;
+import com.monitor.monitor.been.ScheduleBean;
+import com.monitor.monitor.been.TaskBean;
 import com.monitor.monitor.dao.NailingRobotMapDb;
 import com.monitor.monitor.dao.ScheduleTaskDb;
 import com.monitor.monitor.es.ESClient;
@@ -65,9 +65,9 @@ public class TaskManagement {
 	 */
 	public void init() {
 		this.threadPoolTaskScheduler.initialize(); // 初始化线程池
-		List<Schedule> allRun = std.getAllRun();
+		List<ScheduleBean> allRun = std.getAllRun();
 		// 启动任务
-		for (Schedule schedule : allRun) {
+		for (ScheduleBean schedule : allRun) {
 			taskList.add(new SpringDynamicCronTask(schedule, this.threadPoolTaskScheduler, this.dingtalk,
 					this.esOperate, this.metric_version, this.esClient,this.nailingRobotMapDb));
 		}
@@ -88,7 +88,7 @@ public class TaskManagement {
 	 * @param schedule 任务对象
 	 * @return
 	 */
-	public boolean addTask(Schedule schedule) {
+	public boolean addTask(ScheduleBean schedule) {
 		return taskList.add(new SpringDynamicCronTask(schedule, this.threadPoolTaskScheduler, this.dingtalk,
 				this.esOperate, this.metric_version, this.esClient,this.nailingRobotMapDb));
 	}
@@ -99,7 +99,7 @@ public class TaskManagement {
 	 * @param schedule
 	 * @return
 	 */
-	public boolean removeTask(Schedule schedule) {
+	public boolean removeTask(ScheduleBean schedule) {
 		// 1、找出任务
 		List<SpringDynamicCronTask> filterObj = taskList.stream()
 				.filter(a -> a.getSchedule().getTaskId().equals(schedule.getTaskId())).collect(Collectors.toList());

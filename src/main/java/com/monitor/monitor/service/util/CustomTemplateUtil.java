@@ -2,7 +2,7 @@ package com.monitor.monitor.service.util;
 
 import java.util.List;
 
-import com.monitor.monitor.been.Schedule;
+import com.monitor.monitor.been.ScheduleBean;
 
 public class CustomTemplateUtil {
 
@@ -12,7 +12,7 @@ public class CustomTemplateUtil {
 	private static String overcount = "\\{超过记录数据\\}";
 	// 明细
 
-	public static String Expression(String customExpression, Schedule schedule, List<String> matchingList) {
+	public static String Expression(String customExpression, ScheduleBean schedule, List<String> matchingList) {
 
 		String str = ""; //超过记录数据
 		for (String b : matchingList) {

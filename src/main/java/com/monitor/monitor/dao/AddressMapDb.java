@@ -10,7 +10,7 @@ import org.elasticsearch.common.inject.Singleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.monitor.monitor.been.HostnameMap;
+import com.monitor.monitor.been.HostnameMapBean;
 import com.mysql.jdbc.Statement;
 
 //主机映射
@@ -27,14 +27,14 @@ public class AddressMapDb {
 	 * 
 	 * @return
 	 */
-	public List<HostnameMap> getAll() {
-		List<HostnameMap> list = new ArrayList<>();
+	public List<HostnameMapBean> getAll() {
+		List<HostnameMapBean> list = new ArrayList<>();
 
 		ResultSet rs;
 		try {
 			rs = db.select("select * from hostname_map");
 			while (rs.next()) {
-				list.add(new HostnameMap(rs.getInt("id"), rs.getString("hostname"), rs.getString("address"),
+				list.add(new HostnameMapBean(rs.getInt("id"), rs.getString("hostname"), rs.getString("address"),
 						rs.getString("remark"), rs.getString("hostId")));
 			}
 			rs.close();

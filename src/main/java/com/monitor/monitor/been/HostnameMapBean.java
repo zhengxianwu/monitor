@@ -1,12 +1,12 @@
 package com.monitor.monitor.been;
 
-public class HostnameMap {
+public class HostnameMapBean {
 	private int id;
 	private String hostname; //主机名
 	private String address; //ip地址
 	private String remark;//备注
 	private String hostId;//唯一标识
-	public HostnameMap(int id, String hostname, String address, String remark, String hostId) {
+	public HostnameMapBean(int id, String hostname, String address, String remark, String hostId) {
 		super();
 		this.id = id;
 		this.hostname = hostname;
