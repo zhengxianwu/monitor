@@ -14,6 +14,7 @@ import com.monitor.monitor.been.HostnameMapBean;
 import com.monitor.monitor.been.NailingRobotMapBean;
 import com.monitor.monitor.been.ScheduleBean;
 import com.monitor.monitor.been.mapper.HostnameMapBeanMapper;
+import com.monitor.monitor.been.mapper.NailingRobotMapBeanMapper;
 import com.monitor.monitor.dao.AddressMapDb;
 import com.monitor.monitor.dao.DbTools;
 import com.monitor.monitor.dao.NailingRobotMapDb;
@@ -111,12 +112,10 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/hostmap/delete", method = RequestMethod.POST)
 	public String DelHostmap(@RequestParam(value = "hostId", required = true) String hostId) {
-		boolean deleteMap =  dbTool.getSqlSeesion().getMapper(HostnameMapBeanMapper.class).deleteHostname(hostId);
+		boolean deleteMap = dbTool.getSqlSeesion().getMapper(HostnameMapBeanMapper.class).deleteHostname(hostId);
 		return String.valueOf(deleteMap);
 	}
 
-	
-	
 	// --------------------------------------定时任务--------------------------------------
 	/**
 	 * 获取定时任务
@@ -405,7 +404,7 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/DingTalk/All", method = RequestMethod.GET)
 	public String getTalk() {
-		List<NailingRobotMapBean> all = nrm.getAll();
+		List<NailingRobotMapBean> all = dbTool.getSqlSeesion().getMapper(NailingRobotMapBeanMapper.class).getAll();
 		return JSONArray.fromObject(all).toString();
 	}
 
@@ -420,8 +419,9 @@ public class GeneralController {
 	public String AddTalk(@RequestParam(value = "rootName", required = true) String rootName,
 			@RequestParam(value = "rootToken", required = true) String rootToken) {
 		String rootId = MyMD5.Md5(rootToken);
-		boolean addMap = nrm.addMap(rootId, rootName, rootToken);
-		return String.valueOf(addMap);
+		boolean insertNailingRobotMapBean = dbTool.getSqlSeesion().getMapper(NailingRobotMapBeanMapper.class)
+				.insertNailingRobotMapBean(new NailingRobotMapBean(rootId, rootName, rootToken));
+		return String.valueOf(insertNailingRobotMapBean);
 	}
 
 	/**
@@ -435,8 +435,9 @@ public class GeneralController {
 	public String updateTalk(@RequestParam(value = "rootId", required = true) String rootId,
 			@RequestParam(value = "rootName", required = true) String rootName,
 			@RequestParam(value = "rootToken", required = true) String rootToken) {
-		boolean addMap = nrm.updateMap(rootName, rootToken, rootId);
-		return String.valueOf(addMap);
+		boolean updateNailingRobotMapBean = dbTool.getSqlSeesion().getMapper(NailingRobotMapBeanMapper.class)
+				.updateNailingRobotMapBean(new NailingRobotMapBean(rootName, rootToken, rootId));
+		return String.valueOf(updateNailingRobotMapBean);
 	}
 
 	/**
@@ -447,8 +448,9 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/DingTalk/delete", method = RequestMethod.POST)
 	public String DelTalk(@RequestParam(value = "rootId", required = true) String rootId) {
-		boolean addMap = nrm.deleteMap(rootId);
-		return String.valueOf(addMap);
+		boolean deleteNailingRobotMapBean = dbTool.getSqlSeesion().getMapper(NailingRobotMapBeanMapper.class)
+				.deleteNailingRobotMapBean(rootId);
+		return String.valueOf(deleteNailingRobotMapBean);
 	}
 
 }

@@ -14,6 +14,15 @@ public class NailingRobotMapBean {
 		this.rootName = rootName;
 		this.rootToken = rootToken;
 	}
+	
+
+	public NailingRobotMapBean(String rootId, String rootName, String rootToken) {
+		super();
+		this.rootId = rootId;
+		this.rootName = rootName;
+		this.rootToken = rootToken;
+	}
+
 
 	public int getId() {
 		return id;
