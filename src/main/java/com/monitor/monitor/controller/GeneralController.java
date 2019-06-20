@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.monitor.monitor.been.HostnameMap;
-import com.monitor.monitor.been.NailingRobotMap;
-import com.monitor.monitor.been.Schedule;
+import com.monitor.monitor.been.HostnameMapBean;
+import com.monitor.monitor.been.NailingRobotMapBean;
+import com.monitor.monitor.been.ScheduleBean;
 import com.monitor.monitor.dao.AddressMapDb;
 import com.monitor.monitor.dao.NailingRobotMapDb;
 import com.monitor.monitor.dao.ScheduleTaskDb;
@@ -53,7 +53,7 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/hostmap/All", method = RequestMethod.GET)
 	public String getHostmap() {
-		List<HostnameMap> all = amd.getAll();
+		List<HostnameMapBean> all = amd.getAll();
 		return JSONArray.fromObject(all).toString();
 	}
 
@@ -120,7 +120,7 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/task/All", method = RequestMethod.GET)
 	public String GetTask() {
-		List<Schedule> all = std.getAll();
+		List<ScheduleBean> all = std.getAll();
 		return JSONArray.fromObject(all).toString();
 	}
 
@@ -270,7 +270,7 @@ public class GeneralController {
 			@RequestParam(value = "reminderId", required = true) String reminderId,
 			@RequestParam(value = "customExpression", required = false, defaultValue = "") String customExpression) {
 		boolean updateMap = true;
-		Schedule oldSchedule = std.getTaskId(taskId);
+		ScheduleBean oldSchedule = std.getTaskId(taskId);
 
 		// 监控类型
 		TaskMonitorType tmt = null;
@@ -399,7 +399,7 @@ public class GeneralController {
 	 */
 	@RequestMapping(value = "/DingTalk/All", method = RequestMethod.GET)
 	public String getTalk() {
-		List<NailingRobotMap> all = nrm.getAll();
+		List<NailingRobotMapBean> all = nrm.getAll();
 		return JSONArray.fromObject(all).toString();
 	}
 

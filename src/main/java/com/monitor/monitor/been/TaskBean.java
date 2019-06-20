@@ -2,30 +2,34 @@ package com.monitor.monitor.been;
 
 import com.monitor.monitor.schedule.SpringDynamicCronTask;
 
-public class Task {
-	private Schedule schedule;
+public class TaskBean {
+	private ScheduleBean schedule;
 	private SpringDynamicCronTask springDynamicCronTask;
-	public Schedule getSchedule() {
+
+	public ScheduleBean getSchedule() {
 		return schedule;
 	}
-	public void setSchedule(Schedule schedule) {
+
+	public void setSchedule(ScheduleBean schedule) {
 		this.schedule = schedule;
 	}
-	public Task(Schedule schedule, SpringDynamicCronTask springDynamicCronTask) {
+
+	public TaskBean(ScheduleBean schedule, SpringDynamicCronTask springDynamicCronTask) {
 		super();
 		this.schedule = schedule;
 		this.springDynamicCronTask = springDynamicCronTask;
 	}
+
 	public SpringDynamicCronTask getSpringDynamicCronTask() {
 		return springDynamicCronTask;
 	}
+
 	public void setSpringDynamicCronTask(SpringDynamicCronTask springDynamicCronTask) {
 		this.springDynamicCronTask = springDynamicCronTask;
 	}
-	public Task() {
+
+	public TaskBean() {
 		super();
 	}
-	
 
-	
 }

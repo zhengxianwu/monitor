@@ -11,8 +11,8 @@ import org.elasticsearch.common.inject.Singleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.monitor.monitor.been.HostnameMap;
-import com.monitor.monitor.been.Schedule;
+import com.monitor.monitor.been.HostnameMapBean;
+import com.monitor.monitor.been.ScheduleBean;
 import com.monitor.monitor.schedule.TaskManagement;
 import com.mysql.jdbc.Statement;
 
@@ -32,13 +32,13 @@ public class ScheduleTaskDb {
 	 * 
 	 * @return list
 	 */
-	public List<Schedule> getAll() {
-		List<Schedule> list = new ArrayList<>();
+	public List<ScheduleBean> getAll() {
+		List<ScheduleBean> list = new ArrayList<>();
 		ResultSet rs;
 		try {
 			rs = db.select("select * from " + table);
 			while (rs.next()) {
-				list.add(new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
+				list.add(new ScheduleBean(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
 						rs.getString("threshold"), rs.getString("taskName"),rs.getString("taskId"), rs.getString("taskType"),
 						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType"),
 						rs.getString("reminderType"), rs.getString("reminderId"), rs.getString("customExpression")));
@@ -117,13 +117,13 @@ public class ScheduleTaskDb {
 	 * 
 	 * @return list
 	 */
-	public List<Schedule> getAllRun() {
-		List<Schedule> list = new ArrayList<>();
+	public List<ScheduleBean> getAllRun() {
+		List<ScheduleBean> list = new ArrayList<>();
 		ResultSet rs;
 		try {
 			rs = db.select("select * from " + table + " where taskState = 'Run'");
 			while (rs.next()) {
-				list.add(new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
+				list.add(new ScheduleBean(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
 						rs.getString("threshold"), rs.getString("taskId"), rs.getString("taskType"),
 						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType"),
 						rs.getString("reminderType"), rs.getString("reminderId"), rs.getString("customExpression")));
@@ -143,13 +143,13 @@ public class ScheduleTaskDb {
 	 * @param taskId 任务Id
 	 * @return
 	 */
-	public Schedule getTaskId(String taskId) {
-		Schedule schedule = null;
+	public ScheduleBean getTaskId(String taskId) {
+		ScheduleBean schedule = null;
 		ResultSet rs;
 		try {
 			rs = db.select(String.format("select * from " + table + " where taskId = '%s'", taskId));
 			while (rs.next()) {
-				schedule = new Schedule(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
+				schedule = new ScheduleBean(rs.getString("Id"), rs.getString("hostname"), rs.getString("type"),
 						rs.getString("threshold"), rs.getString("taskId"), rs.getString("taskType"),
 						rs.getString("taskValue"), rs.getString("taskState"), rs.getString("operationType"),
 						rs.getString("reminderType"), rs.getString("reminderId"), rs.getString("customExpression"));
