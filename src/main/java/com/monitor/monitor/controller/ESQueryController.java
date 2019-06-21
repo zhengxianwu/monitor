@@ -289,28 +289,20 @@ public class ESQueryController {
 		return fromObject.toString();
 	}
 
-	
-	
-	
-	
-	
 	/**
-	 * 获取索引数据（只过滤索引）
+	 * 获取索引数据（只过滤索引 和hostname）
+	 * 
 	 * @param hostname
 	 * @param indexName
-	 * @param module
-	 * @param name
 	 * @param from
 	 * @param size
 	 * @param sortOrder
 	 * @param indexTime
 	 * @return
 	 */
-	@RequestMapping(value = "/ESQuery/getNewDataByModule", method = RequestMethod.GET)
-	public String getNewDataByModule(@RequestParam(value = "hostname", required = true) String hostname,
+	@RequestMapping(value = "/ESQuery/getNewDataByHostname", method = RequestMethod.GET)
+	public String getNewDataByHostname(@RequestParam(value = "hostname", required = true) String hostname,
 			@RequestParam(value = "indexName", required = true) String indexName,
-			@RequestParam(value = "module", required = true) String module,
-			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "from", required = false, defaultValue = "") String from,
 			@RequestParam(value = "size", required = false, defaultValue = "") String size,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
@@ -325,14 +317,14 @@ public class ESQueryController {
 		String beatName = "";
 		if (indexName.equals("fileset")) {
 			if (indexTime.equals("")) {
-				indexName = MyDataUtil.getIndexFormat(fileset_version);
+				indexName = MyDataUtil.getIndexALL(fileset_version);
 			} else {
 				indexName = MyDataUtil.getIndexFormat(fileset_version, indexTime);
 			}
 			beatName = "fileset";
 		} else if (indexName.equals("metric")) {
 			if (indexTime.equals("")) {
-				indexName = MyDataUtil.getIndexFormat(metric_version);
+				indexName = MyDataUtil.getIndexALL(metric_version);
 			} else {
 				indexName = MyDataUtil.getIndexFormat(metric_version, indexTime);
 			}
@@ -352,19 +344,88 @@ public class ESQueryController {
 
 		List<String> newData = null;
 
-		System.out.println("indexName: " + indexName + "\r\nhostname  : " + hostname + "\r\n beatName :" + beatName
-				+ "\r\n module : " + module + "\r\n name : " + name + "\r\n order :" + Order);
-
-		if (name.equals("")) {
-			newData = esOperate.getNewData(client, indexName, hostname, beatName, module, Order);
+		if (size.equals("") || size.equals("0")) {
+			// 默认1W条
+			size = "10000";
+			newData = esOperate.RangeSearch(client, indexName, hostname, Integer.parseInt(from), Integer.parseInt(size),
+					Order);
 		} else {
-			newData = esOperate.getNewData(client, indexName, hostname, beatName, module, name, Order);
+			newData = esOperate.RangeSearch(client, indexName, hostname, Integer.parseInt(from), Integer.parseInt(size),
+					Order);
 		}
+
 		JSONArray fromObject = JSONArray.fromObject(newData);
 		if (newData == null)
 			return null;
 		return fromObject.toString();
 	}
-	
-	
+
+	/**
+	 * 获取索引数据（只过滤索引）
+	 * 
+	 * @param hostname
+	 * @param indexName
+	 * @param from
+	 * @param size
+	 * @param sortOrder
+	 * @param indexTime
+	 * @return
+	 */
+	@RequestMapping(value = "/ESQuery/getNewDataByIndex", method = RequestMethod.GET)
+	public String getNewDataByIndex(@RequestParam(value = "indexName", required = true) String indexName,
+			@RequestParam(value = "from", required = false, defaultValue = "") String from,
+			@RequestParam(value = "size", required = false, defaultValue = "") String size,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
+			@RequestParam(value = "indexTime", required = false, defaultValue = "") String indexTime) {
+		TransportClient client = null;
+		try {
+			client = esClient.getClient();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+
+		String beatName = "";
+		if (indexName.equals("fileset")) {
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexALL(fileset_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(fileset_version, indexTime);
+			}
+			beatName = "fileset";
+		} else if (indexName.equals("metric")) {
+			if (indexTime.equals("")) {
+				indexName = MyDataUtil.getIndexALL(metric_version);
+			} else {
+				indexName = MyDataUtil.getIndexFormat(metric_version, indexTime);
+			}
+			beatName = "metricset";
+		}
+
+		if (from.equals("")) {
+			from = "0";
+		}
+
+		SortOrder Order;
+		if (sortOrder.equals("desc")) {
+			Order = SortOrder.DESC;
+		} else {
+			Order = SortOrder.ASC;
+		}
+
+		List<String> newData = null;
+
+		if (size.equals("") || size.equals("0")) {
+			// 默认1W条
+			size = "10000";
+			newData = esOperate.RangeSearch(client, indexName, Integer.parseInt(from), Integer.parseInt(size), Order);
+		} else {
+			newData = esOperate.RangeSearch(client, indexName, Integer.parseInt(from), Integer.parseInt(size), Order);
+		}
+
+		JSONArray fromObject = JSONArray.fromObject(newData);
+		if (newData == null)
+			return null;
+		return fromObject.toString();
+	}
+
 }

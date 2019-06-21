@@ -14,8 +14,8 @@ import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
-import com.monitor.monitor.been.NailingRobotMap;
-import com.monitor.monitor.been.Schedule;
+import com.monitor.monitor.been.NailingRobotMapBean;
+import com.monitor.monitor.been.ScheduleBean;
 import com.monitor.monitor.dao.NailingRobotMapDb;
 import com.monitor.monitor.es.Beat;
 import com.monitor.monitor.es.ESClient;
@@ -33,6 +33,13 @@ import com.monitor.monitor.service.util.TaskUtil;
 
 import net.sf.json.JSONObject;
 
+
+/**
+ * 任务执行对象
+ * @author wuzhe
+ *
+ */
+
 //@Lazy(false)
 //@Component
 //@EnableScheduling
@@ -45,12 +52,12 @@ public class SpringDynamicCronTask {
 	private ESClient esClient;
 
 	private String cron;
-	private Schedule schedule;
+	private ScheduleBean schedule;
 	ScheduledFuture<?> scheduledFuture = null;
 	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 	private NailingRobotMapDb nailingRobotMapDb;
 
-	public SpringDynamicCronTask(Schedule schedule, ThreadPoolTaskScheduler threadPoolTaskScheduler,
+	public SpringDynamicCronTask(ScheduleBean schedule, ThreadPoolTaskScheduler threadPoolTaskScheduler,
 			DingtalkRobotUtil dingtalk, ESOperate esOperate, String metric_version, ESClient esClient,
 			NailingRobotMapDb nailingRobotMapDb) {
 		super();
@@ -205,7 +212,7 @@ public class SpringDynamicCronTask {
 							switch (rt) {
 							case DingTalkRobot:
 								// 获取token,根据Id
-								NailingRobotMap nailingRobotMap = nailingRobotMapDb.getNailingRobotMap(reminderId);
+								NailingRobotMapBean nailingRobotMap = nailingRobotMapDb.getNailingRobotMap(reminderId);
 								messageText = dingtalk.messageText(expression, null, false, nailingRobotMap.getRootToken());
 								System.out.println(schedule);
 								break;
@@ -242,7 +249,7 @@ public class SpringDynamicCronTask {
 		}
 	}
 
-	public Schedule getSchedule() {
+	public ScheduleBean getSchedule() {
 		return this.schedule;
 	}
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.monitor.monitor.been.mapper.ScheduleBeanMapper">
+	<select id="getAll" resultType="ScheduleBean">
+		select * from schedule
+	</select>
+
+	<insert id="insertScheduleBean" parameterType="ScheduleBean">
+		insert into
+		schedule(hostname,type,threshold,taskName,taskId,taskType,taskValue,taskState,operationType,reminderType,reminderId,customExpression)
+		values
+		(#{hostname},#{type},#{threshold},#{taskName},#{taskId},#{taskType},#{taskValue},#{taskState},#{operationType},#{reminderType},#{reminderId},#{customExpression})
+
+
+	</insert>
+
+
+	<update id="updateScheduleBean" parameterType="ScheduleBean">
+		update schedule
+		set
+		taskName = #{taskName},
+		hostname = #{hostname},
+		type = #{type},
+		threshold = #{threshold},
+		taskType = #{taskType},
+		taskValue
+		=#{taskValue},
+		taskState = #{taskState},
+		operationType =
+		#{operationType},
+		reminderType = #{reminderType},
+		reminderId =
+		#{reminderId},
+		customExpression =
+		#{customExpression}
+		where taskId =
+		#{taskId}
+
+	</update>
+
+
+	<delete id="deleteScheduleBean" parameterType="java.lang.String">
+		delete from
+		schedule where taskId = #{taskId}
+	</delete>
+
+</mapper>

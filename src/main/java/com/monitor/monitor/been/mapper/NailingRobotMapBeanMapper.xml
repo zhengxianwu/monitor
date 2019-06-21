@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.monitor.monitor.been.mapper.NailingRobotMapBeanMapper">
+	<select id="getAll" resultType="NailingRobotMapBean">
+		select * from nailing_robot
+	</select>
+
+	<insert id="insertNailingRobotMapBean"
+		parameterType="NailingRobotMapBean">
+		insert into
+		nailing_robot(rootId,rootName,rootToken)
+		values
+		(#{rootId},#{rootName},#{rootToken})
+	</insert>
+
+
+	<update id="updateNailingRobotMapBean"
+		parameterType="NailingRobotMapBean">
+		update nailing_robot
+		set
+		rootName = #{rootName},
+		rootToken=#{rootToken}
+		where
+		rootId = #{rootId}
+	</update>
+
+
+	<delete id="deleteNailingRobotMapBean" parameterType="java.lang.String">
+		delete from
+		nailing_robot where rootId = #{rootId}
+	</delete>
+
+</mapper>

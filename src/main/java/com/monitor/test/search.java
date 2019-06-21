@@ -3,7 +3,7 @@ package com.monitor.test;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.monitor.monitor.been.Schedule;
+import com.monitor.monitor.been.ScheduleBean;
 import com.monitor.monitor.es.type.OperationType;
 import com.monitor.monitor.service.util.CustomTemplateUtil;
 import com.monitor.monitor.service.util.MyMD5;
@@ -57,7 +57,7 @@ public class search {
 		default:
 			break;
 		}
-		Schedule schedule = new Schedule();
+		ScheduleBean schedule = new ScheduleBean();
 		schedule.setType("Cpu");
 		schedule.setHostname("zhengxian");
 		ArrayList<String> matchingList = new ArrayList<>();

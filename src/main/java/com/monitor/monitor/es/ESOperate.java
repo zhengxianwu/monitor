@@ -33,7 +33,7 @@ public class ESOperate {
 	// ----------------------------------------集群----------------------------------------------
 
 	/***
-	 * ES数据查询(module&name)
+	 * ES数据查询(只过滤：module&name)
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名字
@@ -66,7 +66,7 @@ public class ESOperate {
 	}
 
 	/***
-	 * ES数据查询(module)
+	 * ES数据查询(只过滤：module)
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名字
@@ -97,7 +97,7 @@ public class ESOperate {
 	}
 
 	/***
-	 * ES数据查询(module&size)
+	 * ES数据查询(只过滤：module&size)
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名字
@@ -128,8 +128,7 @@ public class ESOperate {
 	}
 
 	/**
-	 * /***
-	 * ES数据查询(module&name&size)
+	 * /*** ES数据查询(只过滤：module&name&size)
 	 * 
 	 * @param client      客户端
 	 * @param indexName   索引名字
@@ -140,7 +139,7 @@ public class ESOperate {
 	 * @param type_name
 	 * @param from
 	 * @param size
-	 	 * @return 默认返回最新几条数据
+	 * @return 默认返回最新几条数据
 	 */
 	public List<String> RangeSearch(TransportClient client, String indexName, String hostname, String beat,
 			String type_module, String type_name, int from, int size, SortOrder sortOrder) {
@@ -162,25 +161,47 @@ public class ESOperate {
 		}
 		return list;
 	}
-	
-	
+
 	/***
-	 * ES数据查询(indexName) 用于查询索引得数据
+	 * ES数据查询(只过滤：indexName&hostname) 用于查询索引得数据
 	 * 
-	 * @param client      客户端
-	 * @param indexName   索引名字
-	 * @param hostname    主机名称
-	 * @param sortOrder   排序方法 SortOrder.DESC降序
+	 * @param client    客户端
+	 * @param indexName 索引名字
+	 * @param hostname  主机名称
+	 * @param sortOrder 排序方法 SortOrder.DESC降序
 	 * @return 默认返回最新几条数据
 	 */
-	public List<String> RangeSearch(TransportClient client, String indexName, String hostname,
-			 int from, int size, SortOrder sortOrder) {
+	public List<String> RangeSearch(TransportClient client, String indexName, String hostname, int from, int size,
+			SortOrder sortOrder) {
 		List<String> list = null;
 		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
 		SearchResponse actionGet = b
-				.setQuery(QueryBuilders.boolQuery()
-						.filter(QueryBuilders.termQuery("beat.hostname", hostname)))
+				.setQuery(QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("beat.hostname", hostname)))
 				.setFrom(from).setSize(size).addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
+		SearchHits hits = actionGet.getHits();
+		SearchHit[] hitsCount = hits.getHits();
+		if (hitsCount.length > 0) {
+			list = new ArrayList<String>();
+			for (int i = 0; i < hitsCount.length; i++) {
+				list.add(hitsCount[i].getSourceAsString());
+			}
+		}
+		return list;
+	}
+
+	/***
+	 * ES数据查询(只过滤：indexName) 用于查询索引得数据
+	 * 
+	 * @param client    客户端
+	 * @param indexName 索引名字
+	 * @param sortOrder 排序方法 SortOrder.DESC降序
+	 * @return 默认返回最新几条数据
+	 */
+	public List<String> RangeSearch(TransportClient client, String indexName, int from, int size, SortOrder sortOrder) {
+		List<String> list = null;
+		SearchRequestBuilder b = client.prepareSearch(indexName).setTypes("doc");
+		SearchResponse actionGet = b.setQuery(QueryBuilders.boolQuery()).setFrom(from).setSize(size)
+				.addSort("@timestamp", sortOrder).setExplain(true).execute().actionGet();
 		SearchHits hits = actionGet.getHits();
 		SearchHit[] hitsCount = hits.getHits();
 		if (hitsCount.length > 0) {
@@ -467,5 +488,5 @@ public class ESOperate {
 		return list;
 	}
 	// --------------------------------------------------------------------------------------
-	
+
 }
