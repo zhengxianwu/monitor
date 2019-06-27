@@ -9,16 +9,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 
 @Component
 @Aspect
 public class TestAspect {
 
-	private final static Logger logger = LoggerFactory.getLogger(TestAspect.class);
 	
 	@Pointcut("execution(* com.monitor.monitor.controller.*Controller.*(..))")
 	public void Pointcut() {
@@ -28,7 +26,6 @@ public class TestAspect {
 	@Before("Pointcut()")
 	public void beforeMethod(JoinPoint joinPoint) {
 		System.out.println("调用了前置通知");
-
 	}
 
 	// @After: 后置通知
@@ -54,7 +51,7 @@ public class TestAspect {
     public Object Around(ProceedingJoinPoint pjp) throws Throwable {
         System.out.println("around执行方法之前");
         Object object = pjp.proceed();
-        logger.info("around执行方法之后--返回值：" +object);
+        System.out.println("around执行方法之后--返回值：" +object);
         return object;
 
     }

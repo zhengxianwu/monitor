@@ -3,6 +3,8 @@ package com.monitor.monitor.controller;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.monitor.monitor.aspect.TestAspect;
 import com.monitor.monitor.been.HostnameMapBean;
 import com.monitor.monitor.been.NailingRobotMapBean;
 import com.monitor.monitor.been.ScheduleBean;
@@ -34,7 +37,8 @@ import net.sf.json.JSONArray;
 @CrossOrigin
 @RestController
 public class GeneralController {
-
+	private final static Logger logger = LoggerFactory.getLogger(GeneralController.class);
+	
 	@Autowired
 	private ScheduleTaskDb std;
 
@@ -57,7 +61,9 @@ public class GeneralController {
 	@RequestMapping(value = "/hostmap/All", method = RequestMethod.GET)
 	public String getHostmap() {
 		List<HostnameMapBean> all = dbTool.getSqlSeesion().getMapper(HostnameMapBeanMapper.class).getAll();
-		return JSONArray.fromObject(all).toString();
+		String res = JSONArray.fromObject(all).toString();
+		logger.info(res);
+		return res;
 	}
 
 	/**

@@ -24,7 +24,7 @@ import com.mysql.jdbc.Statement;
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc // 注入MockMvc
 public class DatabasesTest {
-
+	
 	@Autowired
 	private Databases db;
 
