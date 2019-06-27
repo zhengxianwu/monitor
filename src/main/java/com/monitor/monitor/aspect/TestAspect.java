@@ -13,12 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Aspect
 public class TestAspect {
 
+	private final static Logger logger = LoggerFactory.getLogger(TestAspect.class);
+	
 	@Pointcut("execution(* com.monitor.monitor.controller.*Controller.*(..))")
 	public void Pointcut() {
 	}
@@ -53,7 +54,7 @@ public class TestAspect {
     public Object Around(ProceedingJoinPoint pjp) throws Throwable {
         System.out.println("around执行方法之前");
         Object object = pjp.proceed();
-        System.out.println("around执行方法之后--返回值：" +object);
+        logger.info("around执行方法之后--返回值：" +object);
         return object;
 
     }

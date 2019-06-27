@@ -44,13 +44,6 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
-		<!-- log -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.16.20</version>
-			<scope>provided</scope>
-		</dependency>
 
 
 		<dependency>
@@ -116,14 +109,6 @@
 		</dependency>
 
 
-		<!-- log4j -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.11.1</version>
-		</dependency>
-
-
 		<!-- DingtalkRobot -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -157,7 +142,13 @@
 			<artifactId>mybatis</artifactId>
 			<version>3.5.0</version>
 		</dependency>
-
+	
+		<!-- slf4j-log4j -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.2</version>
+		</dependency>
 	</dependencies>
 
 

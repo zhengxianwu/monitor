@@ -7,7 +7,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-@EnableScheduling	
+@EnableScheduling	//定时任务
 @SpringBootApplication
 public class MonitorApplication extends SpringBootServletInitializer{
 

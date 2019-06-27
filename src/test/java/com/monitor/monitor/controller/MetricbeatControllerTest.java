@@ -22,10 +22,8 @@ import org.springframework.web.context.WebApplicationContext;
 import com.monitor.monitor.es.ESClient;
 import com.monitor.monitor.service.metricbeat.Metircbeat;
 
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc // 注入MockMvc

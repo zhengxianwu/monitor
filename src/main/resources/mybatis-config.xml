@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			</dataSource>
 		</environment>
 	</environments>
+	
 	<mappers>
 		<package name="com.monitor.monitor.been.mapper" />
 	</mappers>
